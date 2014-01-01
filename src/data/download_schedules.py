@@ -8,7 +8,12 @@ Download all of the schedules from the individual team sites
 import os
 import urllib2
 
+import sys
+sys.path.append(r'..')
+import util.util as util
+
 # Website ids for all of the MLB teams to download their schedule
+BASE_URL = "http://mlb.mlb.com/soa/ical/schedule.csv?"
 SEASON = 2014
 TEAM_IDS = {
     'bal': 110,
@@ -48,13 +53,17 @@ def main():
     Creates a schedules directory and downloads all schedules to disk
     """
     for key, value in TEAM_IDS.iteritems():
-        url = "http://mlb.mlb.com/soa/ical/schedule.csv?team_id=%d&season=%d&game_type='R'" % (value, SEASON)
+        util.print_progress_dot()
+        url = "%steam_id=%d&season=%d&game_type='R'" % (BASE_URL, value, SEASON)
         page = urllib2.urlopen(url)
-        
+
         if not os.path.isdir('schedules/%s/' % (SEASON)):
             os.makedirs('schedules/%s' %(SEASON))
-        
+
         open('schedules/%s/%s.csv' % (SEASON, key), "w").write(page.read())
+
+    print ''
+    print ''
 
 
 if __name__ == '__main__':

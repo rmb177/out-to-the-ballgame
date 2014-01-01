@@ -1,1 +1,1 @@
-pylint src --disable=C0301,F0401,R0801
+pylint src --disable=F0401,R0903,W0232
