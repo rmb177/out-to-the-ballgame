@@ -13,6 +13,7 @@ class Team(ndb.Model):
     """
     mlbId = ndb.IntegerProperty()
     name = ndb.StringProperty()
+    name_abbr = ndb.StringProperty()
     league = ndb.StringProperty()
     division = ndb.StringProperty()
     stadium_name = ndb.StringProperty()

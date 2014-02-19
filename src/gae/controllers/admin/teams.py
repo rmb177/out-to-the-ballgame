@@ -18,6 +18,7 @@ TEAM_DATA_PATH = '../../data/team_data.json'
 TEAMS_KEY = 'teams'
 MLBID_KEY = 'mlbId'
 NAME_KEY = 'name'
+NAME_ABBR_KEY = 'nameAbbr'
 LEAGUE_KEY = 'league'
 DIVISION_KEY = 'division'
 STADIUM_KEY = 'stadiumName'
@@ -42,6 +43,7 @@ class AdminTeamHandler(webapp2.RequestHandler):
             team = Team.query(Team.mlbId == team_data[MLBID_KEY]).get() or Team()
             team.mlbId = team_data[MLBID_KEY]
             team.name = team_data[NAME_KEY]
+            team.name_abbr = team_data[NAME_ABBR_KEY]
             team.league = team_data[LEAGUE_KEY]
             team.division = team_data[DIVISION_KEY]
             team.stadium_name = team_data[STADIUM_KEY]
