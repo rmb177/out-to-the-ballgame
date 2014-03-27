@@ -8,17 +8,27 @@ datastore
 
 #import json
 import csv
+import datetime
+import os
 import re
+import time
 import webapp2
 
-from os import listdir
-from os.path import isfile, join, split
+#from pytz.gae import pytz
 
-from models.team import Team
+import models.eastern_tz as eastern_tz
+import models.game as game
+import models.team as team
+
 
 #from google.appengine.ext import ndb
 
 GAME_DATA_PATH = '../../data/schedules/2014/'
+
+GAME_DATE_INDEX = 0
+GAME_TIME_INDEX = 2
+TEAMS_INDEX = 3
+LOCATION_INDEX = 4
 
 #TEAM_DATA_PATH = '../../data/team_data.json'
 #TEAMS_KEY = 'teams'
@@ -40,40 +50,63 @@ class AdminGameHandler(webapp2.RequestHandler):
         """
         Read game data files and add/update to the datastore.
         """        
-        path = join(split(__file__)[0], GAME_DATA_PATH)
-        file_names = [join(path, f) for f in listdir(path) if isfile(join(path, f))]
+        path = os.path.join(os.path.split(__file__)[0], GAME_DATA_PATH)
+        file_names = [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
         
         
         for file_name in file_names:
             with open(file_name, 'rb') as f:
-                next(f)
+                next(f) # skip header line
                 reader = csv.reader(f)
                 
-                # Pull out the team name abbreviation from the file name and
-                # get the team record
-                m = re.search('[a-z]{2,3}\.csv\Z', file_name)
-                team_abbr = m.group(0)[:-4]
-                team = Team.query(Team.name_abbr == team_abbr).get()
-                print team.name
-
-                x = 0
+                home_team = self.__get_home_team(file_name)
+                
                 for row in reader:
-                    
-                    x += 1
-                print x
-            
+                    if home_team.stadium_name == row[LOCATION_INDEX]:
+                        away_team = self.__get_away_team(row[TEAMS_INDEX])
+                        game_time = self.__get_game_time(row[GAME_DATE_INDEX], row[GAME_TIME_INDEX])
+                        
+                        print away_team
+                        g = game.Game()
+                        g.home_team = home_team.key
+                        g.away_team = away_team.key
+                        g.game_time = game_time
+                        #g.put()
+    
+    def __get_home_team(self, file_name):
+        """
+        Fetch the team who's schedule file we're processing
+        """
+        m = re.search('[a-z]{2,3}\.csv\Z', file_name)
+        home_team_abbr = m.group(0)[:-4]
+        return team.Team.query(team.Team.name_abbr == home_team_abbr).get()
+    
+    
+    def __get_away_team(self, game_info_str):
+        """
+        Fetch the away team based on the game info string:
+            format: 'Phillies at Braves'
         
-        #path = os.path.join(os.path.split(__file__)[0], TEAM_DATA_PATH)
-        #teams_json = json.loads(open(path).read())
-        #for team_data in teams_json[TEAMS_KEY]:
-        #    team = Team.query(Team.mlbId == team_data[MLBID_KEY]).get() or Team()
-        #    team.mlbId = team_data[MLBID_KEY]
-        #    team.name = team_data[NAME_KEY]
-        #    team.league = team_data[LEAGUE_KEY]
-        #    team.division = team_data[DIVISION_KEY]
-        #    team.stadium_name = team_data[STADIUM_KEY]
-        #    team.location = ndb.GeoPt(team_data[LAT_KEY], team_data[LON_KEY])
-        #    team.put()
-
+        Schedule file abbreivates 'Diamondbacks' as 'D-backs'
+        """
+        away_team_name = re.search('^.* at', game_info_str).group(0)[:-3]
+        away_team_name = 'Diamondbacks' if away_team_name == 'D-backs' else away_team_name
+        return team.Team.query(team.Team.name == away_team_name).get()
+        
+        
+    def __get_game_time(self, date_str, time_str):
+        """
+        Creates and returns a datetime object from the give date/time strings
+        from the mlb schedule files:
+         date/time format is %m/%d/%y %I:%M %p
+         
+        All times are read in as Eastern and converted to UTC
+        """
+        datetime_str = '%s %s' %(date_str, time_str)
+        game_time = time.strptime(datetime_str,'%m/%d/%y %I:%M %p')
+        est_time = datetime.datetime.fromtimestamp(time.mktime(game_time))
+        tz_info = eastern_tz.EasternTzInfo()
+        utc_time = est_time - tz_info.utcoffset(est_time)
+        return utc_time
 
 app = webapp2.WSGIApplication([('/admin/games', AdminGameHandler)], debug=True)

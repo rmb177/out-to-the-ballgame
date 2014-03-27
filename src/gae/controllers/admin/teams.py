@@ -25,7 +25,7 @@ STADIUM_KEY = 'stadiumName'
 LAT_KEY = 'lat'
 LON_KEY = 'lon'
 
-from models.team import Team
+import models.team as team
 
 
 class AdminTeamHandler(webapp2.RequestHandler):
@@ -40,15 +40,15 @@ class AdminTeamHandler(webapp2.RequestHandler):
         path = os.path.join(os.path.split(__file__)[0], TEAM_DATA_PATH)
         teams_json = json.loads(open(path).read())
         for team_data in teams_json[TEAMS_KEY]:
-            team = Team.query(Team.mlbId == team_data[MLBID_KEY]).get() or Team()
-            team.mlbId = team_data[MLBID_KEY]
-            team.name = team_data[NAME_KEY]
-            team.name_abbr = team_data[NAME_ABBR_KEY]
-            team.league = team_data[LEAGUE_KEY]
-            team.division = team_data[DIVISION_KEY]
-            team.stadium_name = team_data[STADIUM_KEY]
-            team.location = ndb.GeoPt(team_data[LAT_KEY], team_data[LON_KEY])
-            team.put()
+            t = team.Team.query(team.Team.mlbId == team_data[MLBID_KEY]).get() or team.Team()
+            t.mlbId = team_data[MLBID_KEY]
+            t.name = team_data[NAME_KEY]
+            t.name_abbr = team_data[NAME_ABBR_KEY]
+            t.league = team_data[LEAGUE_KEY]
+            t.division = team_data[DIVISION_KEY]
+            t.stadium_name = team_data[STADIUM_KEY]
+            t.location = ndb.GeoPt(team_data[LAT_KEY], team_data[LON_KEY])
+            t.put()
 
 
 app = webapp2.WSGIApplication([('/admin/teams', AdminTeamHandler)], debug=True)
