@@ -6,7 +6,6 @@ Controllers for adding/updating game data in the
 datastore
 """
 
-#import json
 import csv
 import datetime
 import os
@@ -14,14 +13,10 @@ import re
 import time
 import webapp2
 
-#from pytz.gae import pytz
-
 import models.eastern_tz as eastern_tz
 import models.game as game
 import models.team as team
 
-
-#from google.appengine.ext import ndb
 
 GAME_DATA_PATH = '../../data/schedules/2014/'
 
@@ -29,16 +24,6 @@ GAME_DATE_INDEX = 0
 GAME_TIME_INDEX = 2
 TEAMS_INDEX = 3
 LOCATION_INDEX = 4
-
-#TEAM_DATA_PATH = '../../data/team_data.json'
-#TEAMS_KEY = 'teams'
-#MLBID_KEY = 'mlbId'
-#NAME_KEY = 'name'
-#LEAGUE_KEY = 'league'
-#DIVISION_KEY = 'division'
-#STADIUM_KEY = 'stadiumName'
-#LAT_KEY = 'lat'
-#LON_KEY = 'lon'
 
 
 class AdminGameHandler(webapp2.RequestHandler):
@@ -53,7 +38,7 @@ class AdminGameHandler(webapp2.RequestHandler):
         path = os.path.join(os.path.split(__file__)[0], GAME_DATA_PATH)
         file_names = [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
         
-        
+        num_games = 0
         for file_name in file_names:
             with open(file_name, 'rb') as f:
                 next(f) # skip header line
@@ -63,15 +48,18 @@ class AdminGameHandler(webapp2.RequestHandler):
                 
                 for row in reader:
                     if home_team.stadium_name == row[LOCATION_INDEX]:
+                        num_games += 1
                         away_team = self.__get_away_team(row[TEAMS_INDEX])
                         game_time = self.__get_game_time(row[GAME_DATE_INDEX], row[GAME_TIME_INDEX])
                         
-                        print away_team
-                        g = game.Game()
+                        query = game.Game.gql('WHERE home_team = :1 AND away_team = :2 AND game_time = :3',
+                         home_team.key, away_team.key, game_time)
+                        
+                        g = query.get() or game.Game()
                         g.home_team = home_team.key
                         g.away_team = away_team.key
                         g.game_time = game_time
-                        #g.put()
+                        g.put()                
     
     def __get_home_team(self, file_name):
         """
