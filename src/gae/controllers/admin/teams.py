@@ -6,7 +6,7 @@ Controllers for adding/updating team data in the
 datastore
 """
 
-#pylint: disable=C0103
+#pylint: disable=C0103, R0201
 
 import json
 import os
@@ -40,7 +40,8 @@ class AdminTeamHandler(webapp2.RequestHandler):
         path = os.path.join(os.path.split(__file__)[0], TEAM_DATA_PATH)
         teams_json = json.loads(open(path).read())
         for team_data in teams_json[TEAMS_KEY]:
-            t = team.Team.query(team.Team.mlbId == team_data[MLBID_KEY]).get() or team.Team()
+            t = team.Team.query(
+             team.Team.mlbId == team_data[MLBID_KEY]).get() or team.Team()
             t.mlbId = team_data[MLBID_KEY]
             t.name = team_data[NAME_KEY]
             t.name_abbr = team_data[NAME_ABBR_KEY]

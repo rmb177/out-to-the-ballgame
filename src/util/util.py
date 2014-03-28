@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+"""
+Module to provide some utility functions
+"""
+
+
 import sys
 
 def print_progress_dot():
