@@ -36,7 +36,11 @@ handlers:
 - url: /admin/games
   script: controllers.admin.games.app
   login: admin
-
+  
+- url: /admin/team_games
+  script: controllers.admin.games.app
+  login: admin
+  
 ################################
 # Main page
 ################################

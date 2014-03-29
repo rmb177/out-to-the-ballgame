@@ -6,7 +6,7 @@ Controllers for adding/updating game data in the
 datastore
 """
 
-#pylint: disable=C0103, R0201, W1401
+#pylint: disable=C0103, E1101, R0201, W1401
 
 import csv
 import datetime
@@ -14,6 +14,8 @@ import os
 import re
 import time
 import webapp2
+
+from google.appengine.api import taskqueue
 
 import models.eastern_tz as eastern_tz
 import models.game as game
@@ -30,41 +32,60 @@ LOCATION_INDEX = 4
 
 class AdminGameHandler(webapp2.RequestHandler):
     """
-    Contorller to add/update game info.
+    Controller to add/update game info. This controller
+    is used to kick off a task for each team to load each
+    team's home games into the system. Need to use a task
+    queue to stay within GAE request time limits
     """
 
     def post(self):
         """
-        Read game data files and add/update to the datastore.
+        Read game data files and kick off a task for each team.
         """
         path = os.path.join(os.path.split(__file__)[0], GAME_DATA_PATH)
         file_names = [os.path.join(path, f) for f in
          os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 
         for file_name in file_names:
-            with open(file_name, 'rb') as schedule:
-                next(schedule) # skip header line
-                reader = csv.reader(schedule)
+            taskqueue.add(url='/admin/team_games',
+             params={'file_name': file_name})
 
-                home_team = self.__get_home_team(file_name)
 
-                for row in reader:
-                    if home_team.stadium_name == row[LOCATION_INDEX]:
-                        away_team = self.__get_away_team(row[TEAMS_INDEX])
-                        game_time = self.__get_game_time(
-                         row[GAME_DATE_INDEX], row[GAME_TIME_INDEX])
+class AdminTeamGamesHandler(webapp2.RequestHandler):
+    """
+    Controller to load the given team's home games into the data store
+    """
 
-                        query = game.Game.gql(
-                         'WHERE home_team = :1 AND '
-                         'away_team = :2 AND '
-                         'game_time = :3',
-                         home_team.key, away_team.key, game_time)
+    def post(self):
+        """
+        Read the schedule file for the given team and create/update
+        all of the home games for the team to the datastore.
+        """
+        file_name = self.request.get('file_name')
 
-                        a_game = query.get() or game.Game()
-                        a_game.home_team = home_team.key
-                        a_game.away_team = away_team.key
-                        a_game.game_time = game_time
-                        a_game.put()
+        with open(file_name, 'rb') as schedule:
+            next(schedule) # skip header line
+            reader = csv.reader(schedule)
+
+            home_team = self.__get_home_team(file_name)
+
+            for row in reader:
+                if home_team.stadium_name == row[LOCATION_INDEX]:
+                    away_team = self.__get_away_team(row[TEAMS_INDEX])
+                    game_time = self.__get_game_time(
+                     row[GAME_DATE_INDEX], row[GAME_TIME_INDEX])
+
+                    query = game.Game.gql(
+                     'WHERE home_team = :1 AND '
+                     'away_team = :2 AND '
+                     'game_time = :3',
+                     home_team.key, away_team.key, game_time)
+
+                    a_game = query.get() or game.Game()
+                    a_game.home_team = home_team.key
+                    a_game.away_team = away_team.key
+                    a_game.game_time = game_time
+                    a_game.put()
 
 
     def __get_home_team(self, file_name):
@@ -105,4 +126,6 @@ class AdminGameHandler(webapp2.RequestHandler):
         utc_time = est_time - tz_info.utcoffset(est_time)
         return utc_time
 
-app = webapp2.WSGIApplication([('/admin/games', AdminGameHandler)], debug=True)
+app = webapp2.WSGIApplication([('/admin/games', AdminGameHandler),
+                               ('/admin/team_games', AdminTeamGamesHandler)],
+                               debug=True)
