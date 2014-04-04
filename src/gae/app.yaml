@@ -41,6 +41,14 @@ handlers:
   script: controllers.admin.games.app
   login: admin
   
+- url: /admin/trips
+  script: controllers.admin.trips.app
+  login: admin
+
+- url: /admin/team_trips
+  script: controllers.admin.trips.app
+  login: admin
+  
 ################################
 # Main page
 ################################

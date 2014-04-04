@@ -35,7 +35,7 @@ class AdminGameHandler(webapp2.RequestHandler):
     Controller to add/update game info. This controller
     is used to kick off a task for each team to load each
     team's home games into the system. Need to use a task
-    queue to stay within GAE request time limits
+    queue to stay within GAE request time limits.
     """
 
     def post(self):
