@@ -6,32 +6,21 @@ Controllers for adding/updating trip data to the
 datastore
 """
 
+#pylint: disable=C0103, E1101, R0201
+
 import json
-#import os
 import urllib2
 import webapp2
 
 from google.appengine.api import taskqueue
 
-#from google.appengine.ext import ndb
-
-#TEAM_DATA_PATH = '../../data/team_data.json'
-#TEAMS_KEY = 'teams'
-#MLBID_KEY = 'mlbId'
-#NAME_KEY = 'name'
-#NAME_ABBR_KEY = 'nameAbbr'
-#LEAGUE_KEY = 'league'
-#DIVISION_KEY = 'division'
-#STADIUM_KEY = 'stadiumName'
-#LAT_KEY = 'lat'
-#LON_KEY = 'lon'
-
 import models.config as config
 import models.team as team
 import models.trip as trip
 
-
-DISTANCE_MATRIX_URL = 'https://maps.googleapis.com/maps/api/distancematrix/json'
+DISTANCE_MATRIX_URL = (
+ 'https://maps.googleapis.com/maps/api/distancematrix/json'
+ '?origins=%s&destinations=%s&sensor=false&key=%s&units=imperial')
 
 
 
@@ -74,18 +63,18 @@ class AdminTeamTripsHandler(webapp2.RequestHandler):
         to all of the other stadiums
         """
         origin_team = team.Team.get_by_id(int(self.request.get('team_id')))
+        origin_team_coords = '|'.join(
+         ['%f,%f' %(origin_team.location.lat, origin_team.location.lon)])
+
         dest_coords = []
         dest_teams = []
-
         for dest_team in team.Team.query():
             if origin_team != dest_team:
                 dest_teams.append(dest_team)
                 dest_coords.append(
                  '%f,%f' %(dest_team.location.lat, dest_team.location.lon))
 
-        url = '%s?origins=%s&destinations=%s&sensor=false&key=%s&units=imperial' %(
-         DISTANCE_MATRIX_URL,
-         '|'.join(['%f,%f' %(origin_team.location.lat, origin_team.location.lon)]),
+        url = DISTANCE_MATRIX_URL %(origin_team_coords,
          '|'.join(dest_coords),
          config.Config.get_master_db().google_maps_key)
 
@@ -96,24 +85,23 @@ class AdminTeamTripsHandler(webapp2.RequestHandler):
 
         idx = 0
         for dest_team in dest_teams:
-            print idx
             query = trip.Trip.gql(
             'WHERE orig_team = :1 AND '
                  'dest_team = :2',
                  origin_team.key, dest_team.key)
 
-            t = query.get() or trip.Trip()
-            t.orig_team = origin_team.key
-            t.dest_team = dest_team.key
+            a_trip = query.get() or trip.Trip()
+            a_trip.orig_team = origin_team.key
+            a_trip.dest_team = dest_team.key
             trip_element = trips_matrix['rows'][0]['elements'][idx]
-            t.distance = trip_element['distance']['value']
-            t.distance_desc = trip_element['distance']['text']
-            t.duration = trip_element['duration']['value']
-            t.duration_desc = trip_element['duration']['text']
-            t.put()
+            a_trip.distance = trip_element['distance']['value']
+            a_trip.distance_desc = trip_element['distance']['text']
+            a_trip.duration = trip_element['duration']['value']
+            a_trip.duration_desc = trip_element['duration']['text']
+            a_trip.put()
             idx += 1
 
 
 app = webapp2.WSGIApplication([('/admin/trips', AdminTripHandler),
-                               ('/admin/team_trips', AdminTeamTripsHandler)], 
+                               ('/admin/team_trips', AdminTeamTripsHandler)],
                                debug=True)

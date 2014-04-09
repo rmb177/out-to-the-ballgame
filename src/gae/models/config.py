@@ -5,6 +5,8 @@
 A class to provide configuration values from the data store
 """
 
+#pylint: disable=E1101
+
 from google.appengine.ext import ndb
 
 class Config(ndb.Model):
