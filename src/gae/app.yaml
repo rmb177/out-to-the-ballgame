@@ -53,7 +53,7 @@ handlers:
 # Main page
 ################################
 - url: .*
-  script: main.app
+  script: controllers.home.home.app
   
 
 libraries:
