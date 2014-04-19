@@ -1,35 +1,13 @@
 
-loadTeamData = ->
-   teamDataIndicator = $('#teamDataIndicator')
-   teamDataIndicator.attr('src', '/static/images/ajax_loader.gif')
-   teamDataIndicator.show()
-   $.post('/admin/teams')
+generateLoadingFunction = (progressIndicator, postUrl) ->
+   progressIndicator.attr('src', '/static/images/ajax_loader.gif')
+   progressIndicator.show()
+   $.post(postUrl)
      .done( -> 
-         teamDataIndicator.attr('src', '/static/images/green_check_mark.png'))
+         progressIndicator.attr('src', '/static/images/green_check_mark.png'))
      .fail( -> 
-         teamDataIndicator.attr('src', '/static/images/red_x.gif'))
-
-loadGameData = ->
-   gameDataIndicator = $('#gameDataIndicator')
-   gameDataIndicator.attr('src', '/static/images/ajax_loader.gif')
-   gameDataIndicator.show()
-   $.post('/admin/games')
-     .done( -> 
-         gameDataIndicator.attr('src', '/static/images/green_check_mark.png'))
-     .fail( -> 
-         gameDataIndicator.attr('src', '/static/images/red_x.gif'))
-         
-loadTripData = ->
-   tripDataIndicator = $('#tripDataIndicator')
-   tripDataIndicator.attr('src', '/static/images/ajax_loader.gif')
-   tripDataIndicator.show()
-   $.post('/admin/trips')
-     .done( -> 
-         tripDataIndicator.attr('src', '/static/images/green_check_mark.png'))
-     .fail( -> 
-         tripDataIndicator.attr('src', '/static/images/red_x.gif'))
-
-
+         progressIndicator.attr('src', '/static/images/red_x.gif'))
+   
 init = ->
    $('#teamDataIndicator').hide()
    $('#gameDataIndicator').hide()
@@ -38,19 +16,19 @@ init = ->
    $ ->
       $('#loadTeamData').on('click',
          ->
-            loadTeamData()
+            generateLoadingFunction($('#teamDataIndicator'), '/admin/teams')
          )
          
    $ ->
       $('#loadGameData').on('click',
          ->
-            loadGameData()
+            generateLoadingFunction($('#gameDataIndicator'), '/admin/games')
          )
    
    $ ->
       $('#loadTripData').on('click',
          ->
-            loadTripData()
+            generateLoadingFunction($('#tripDataIndicator'), '/admin/trips')
          )
          
 $(document).ready init
