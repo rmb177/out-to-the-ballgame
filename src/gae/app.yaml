@@ -49,6 +49,14 @@ handlers:
   script: controllers.admin.trips.app
   login: admin
   
+  
+################################
+# Application data
+################################
+- url: /appdata/games
+  script: controllers.appdata.games.app
+  
+  
 ################################
 # Main page
 ################################

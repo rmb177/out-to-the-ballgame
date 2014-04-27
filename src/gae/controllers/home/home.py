@@ -4,7 +4,7 @@
 """
 Controller to handle displaying the home page of the application.
 """
-#pylint: disable=E1101,C0103
+#pylint: disable=C0103, E1101
 
 import os
 import jinja2

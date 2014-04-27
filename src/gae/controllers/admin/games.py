@@ -17,7 +17,6 @@ import webapp2
 
 from google.appengine.api import taskqueue
 
-import models.eastern_tz as eastern_tz
 import models.game as game
 import models.team as team
 
@@ -121,10 +120,8 @@ class AdminTeamGamesHandler(webapp2.RequestHandler):
         """
         datetime_str = '%s %s' %(date_str, time_str)
         game_time = time.strptime(datetime_str, '%m/%d/%y %I:%M %p')
-        est_time = datetime.datetime.fromtimestamp(time.mktime(game_time))
-        tz_info = eastern_tz.EasternTzInfo()
-        utc_time = est_time - tz_info.utcoffset(est_time)
-        return utc_time
+        return datetime.datetime.fromtimestamp(time.mktime(game_time))
+
 
 app = webapp2.WSGIApplication([('/admin/games', AdminGameHandler),
                                ('/admin/team_games', AdminTeamGamesHandler)],
