@@ -49,7 +49,6 @@ handlers:
   script: controllers.admin.trips.app
   login: admin
   
-  
 ################################
 # Application data
 ################################
@@ -60,6 +59,7 @@ handlers:
 ################################
 # Main page
 ################################
+
 - url: .*
   script: controllers.home.home.app
   
