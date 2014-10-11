@@ -1,3 +1,9 @@
+gMap = {}
+
+# formats date as mm/dd/yyyy
+formatDate = (date) ->
+   date.toJSON().slice(0, 10)
+
 getTemplateAjax = (path, callback) ->
    $.ajax(
       url: path,
@@ -7,8 +13,10 @@ getTemplateAjax = (path, callback) ->
          callback(template) if callback
    )
 
+dateChanged = ->
+   displayGamesForDate(formatDate(new Date($("#datepicker").val())))
 
-displayGamesForDate = (date, map) ->
+displayGamesForDate = (date) ->
    $.ajax(
          url: 'appdata/games?date=' + date,
          success: (games) -> 
@@ -17,13 +25,13 @@ displayGamesForDate = (date, map) ->
                   marker = new google.maps.Marker
                      position: new google.maps.LatLng(parseFloat(game.lat), parseFloat(game.lon))      
                      title: game.away_team + ' @ ' + game.home_team
-                     map: map
+                     map: gMap
                   
                   google.maps.event.addListener(marker, 'click', ->
                      infoWindow = new google.maps.InfoWindow()
                      infoWindow.setContent(marker.title)
-                     infoWindow.open(map, marker)
-                     return false;)               
+                     infoWindow.open(gMap, marker)
+                     false;)               
          error: ->
             alert('Error retrieving games for the selected date.')
        )
@@ -40,17 +48,20 @@ initMap = ->
          stylers: [visibility: "off"]
       ]
 
-   map = new google.maps.Map(document.getElementById("schedule-map"), options)
-   displayGamesForDate(new Date().toJSON().slice(0, 10), map)
-   
+   gMap = new google.maps.Map(document.getElementById("schedule-map"), options)
+   displayGamesForDate(new Date().toJSON().slice(0, 10))
    
    getTemplateAjax('/static/js/templates/trip_controls.handlebars', (template) ->
-      map.controls[google.maps.ControlPosition.TOP_RIGHT].push($(template())[0])
-      
+      gMap.controls[google.maps.ControlPosition.TOP_RIGHT].push($(template())[0])      
       # TODO: Revisit this...has to be a better way
-      setTimeout( -> $("#datepicker").datepicker(),
+      setTimeout(-> 
+         $("#datepicker").datepicker()
+         $("#datepicker").change(dateChanged)
+         
+         # preventing keyboard-entered dates
+         $("#datepicker").keyup( (event)->
+            false)
       500)
    )
 
 $(document).ready initMap
-   
