@@ -1,4 +1,5 @@
 gMap = {}
+gGameMarkers = []
 
 # formats date as mm/dd/yyyy
 formatDate = (date) ->
@@ -17,6 +18,9 @@ dateChanged = ->
    displayGamesForDate(formatDate(new Date($("#datepicker").val())))
 
 displayGamesForDate = (date) ->
+   marker.setMap(null) for marker in gGameMarkers
+   gGameMarkers = []
+   
    $.ajax(
          url: 'appdata/games?date=' + date,
          success: (games) -> 
@@ -26,12 +30,14 @@ displayGamesForDate = (date) ->
                      position: new google.maps.LatLng(parseFloat(game.lat), parseFloat(game.lon))      
                      title: game.away_team + ' @ ' + game.home_team
                      map: gMap
-                  
+   
                   google.maps.event.addListener(marker, 'click', ->
                      infoWindow = new google.maps.InfoWindow()
                      infoWindow.setContent(marker.title)
                      infoWindow.open(gMap, marker)
-                     false;)               
+                     false;)
+                     
+                  gGameMarkers.push(marker)
          error: ->
             alert('Error retrieving games for the selected date.')
        )
@@ -52,7 +58,8 @@ initMap = ->
    displayGamesForDate(new Date().toJSON().slice(0, 10))
    
    getTemplateAjax('/static/js/templates/trip_controls.handlebars', (template) ->
-      gMap.controls[google.maps.ControlPosition.TOP_RIGHT].push($(template())[0])      
+      gMap.controls[google.maps.ControlPosition.TOP_RIGHT].push($(template())[0]) 
+           
       # TODO: Revisit this...has to be a better way
       setTimeout(-> 
          $("#datepicker").datepicker()
