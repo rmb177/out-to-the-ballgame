@@ -18,8 +18,9 @@ dateChanged = ->
    displayGamesForDate(formatDate(new Date($("#datepicker").val())))
 
 displayGamesForDate = (date) ->
-   marker.setMap(null) for marker in gGameMarkers
+   aMarker.setMap(null) for aMarker in gGameMarkers
    gGameMarkers = []
+   lastInfoWindow = null
    
    $.ajax(
          url: 'appdata/games?date=' + date,
@@ -32,9 +33,10 @@ displayGamesForDate = (date) ->
                      map: gMap
    
                   google.maps.event.addListener(marker, 'click', ->
-                     infoWindow = new google.maps.InfoWindow()
-                     infoWindow.setContent(marker.title)
-                     infoWindow.open(gMap, marker)
+                     lastInfoWindow.close() if lastInfoWindow isnt null
+                     lastInfoWindow = new google.maps.InfoWindow()
+                     lastInfoWindow.setContent(marker.title)
+                     lastInfoWindow.open(gMap, marker)
                      return false)
                      
                   gGameMarkers.push(marker)

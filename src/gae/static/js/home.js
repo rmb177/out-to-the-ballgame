@@ -29,12 +29,13 @@
   };
 
   displayGamesForDate = function(date) {
-    var marker, _i, _len;
+    var aMarker, lastInfoWindow, _i, _len;
     for (_i = 0, _len = gGameMarkers.length; _i < _len; _i++) {
-      marker = gGameMarkers[_i];
-      marker.setMap(null);
+      aMarker = gGameMarkers[_i];
+      aMarker.setMap(null);
     }
     gGameMarkers = [];
+    lastInfoWindow = null;
     return $.ajax({
       url: 'appdata/games?date=' + date,
       success: function(games) {
@@ -43,16 +44,19 @@
         for (_j = 0, _len1 = games.length; _j < _len1; _j++) {
           game = games[_j];
           _results.push((function(game) {
+            var marker;
             marker = new google.maps.Marker({
               position: new google.maps.LatLng(parseFloat(game.lat), parseFloat(game.lon)),
               title: game.away_team + ' @ ' + game.home_team,
               map: gMap
             });
             google.maps.event.addListener(marker, 'click', function() {
-              var infoWindow;
-              infoWindow = new google.maps.InfoWindow();
-              infoWindow.setContent(marker.title);
-              infoWindow.open(gMap, marker);
+              if (lastInfoWindow !== null) {
+                lastInfoWindow.close();
+              }
+              lastInfoWindow = new google.maps.InfoWindow();
+              lastInfoWindow.setContent(marker.title);
+              lastInfoWindow.open(gMap, marker);
               return false;
             });
             return gGameMarkers.push(marker);
