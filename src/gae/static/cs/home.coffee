@@ -35,7 +35,7 @@ displayGamesForDate = (date) ->
                      infoWindow = new google.maps.InfoWindow()
                      infoWindow.setContent(marker.title)
                      infoWindow.open(gMap, marker)
-                     false;)
+                     return false)
                      
                   gGameMarkers.push(marker)
          error: ->

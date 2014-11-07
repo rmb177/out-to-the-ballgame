@@ -14,7 +14,7 @@ import util.util as util
 
 # Website ids for all of the MLB teams to download their schedule
 BASE_URL = "http://mlb.mlb.com/soa/ical/schedule.csv?"
-SEASON = 2014
+SEASON = 2015
 TEAM_IDS = {
     'bal': 110,
     'bos': 111,

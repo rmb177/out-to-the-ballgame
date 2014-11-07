@@ -21,7 +21,7 @@ import models.game as game
 import models.team as team
 
 
-GAME_DATA_PATH = '../../data/schedules/2014/'
+GAME_DATA_PATH = '../../data/schedules/2015/'
 
 GAME_DATE_INDEX = 0
 GAME_TIME_INDEX = 2
