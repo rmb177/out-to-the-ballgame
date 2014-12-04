@@ -44,18 +44,24 @@
         for (_j = 0, _len1 = games.length; _j < _len1; _j++) {
           game = games[_j];
           _results.push((function(game) {
-            var marker;
+            var context, marker, source, template;
             marker = new google.maps.Marker({
               position: new google.maps.LatLng(parseFloat(game.lat), parseFloat(game.lon)),
               title: game.away_team + ' @ ' + game.home_team,
               map: gMap
             });
+            source = $("#info-window").html();
+            template = Handlebars.compile(source);
+            context = {
+              teams: marker.title,
+              game_time: game.game_time
+            };
             google.maps.event.addListener(marker, 'click', function() {
               if (lastInfoWindow !== null) {
                 lastInfoWindow.close();
               }
               lastInfoWindow = new google.maps.InfoWindow();
-              lastInfoWindow.setContent(marker.title);
+              lastInfoWindow.setContent(template(context));
               lastInfoWindow.open(gMap, marker);
               return false;
             });
@@ -71,7 +77,7 @@
   };
 
   initMap = function() {
-    var options;
+    var options, source, template;
     options = {
       center: new google.maps.LatLng(39.8111444, -98.5569364),
       zoom: 4,
@@ -91,16 +97,16 @@
     };
     gMap = new google.maps.Map(document.getElementById("schedule-map"), options);
     displayGamesForDate(new Date().toJSON().slice(0, 10));
-    return getTemplateAjax('/static/js/templates/trip_controls.handlebars', function(template) {
-      gMap.controls[google.maps.ControlPosition.TOP_RIGHT].push($(template())[0]);
-      return setTimeout(function() {
-        $("#datepicker").datepicker();
-        $("#datepicker").change(dateChanged);
-        return $("#datepicker").keyup(function(event) {
-          return false;
-        });
-      }, 500);
-    });
+    source = $("#trip-controls").html();
+    template = Handlebars.compile(source);
+    gMap.controls[google.maps.ControlPosition.TOP_RIGHT].push($(template())[0]);
+    return setTimeout(function() {
+      $("#datepicker").datepicker();
+      $("#datepicker").change(dateChanged);
+      return $("#datepicker").keyup(function(event) {
+        return false;
+      });
+    }, 1000);
   };
 
   $(document).ready(initMap);
