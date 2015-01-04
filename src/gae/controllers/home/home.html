@@ -9,8 +9,8 @@
          #schedule-map { height: 100% }
       </style>
       
-      <link rel="stylesheet" href="/static/jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.min.css">
-
+      <link rel="stylesheet" href="/static/jquery-ui-1.10.4/css/ui-lightness/jquery-ui-1.10.4.min.css" />
+      <link rel="stylesheet" href="/static/css/styles.css" />
 
       <!--[if lt IE 9]>
          <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -34,9 +34,14 @@
       
       <!-- template for game info window -->
       <script id="info-window" type="text/x-handlebars-template">
-         {{teams}}
-         <br />
-         {{game_time}}
+         <table>
+            <tr>
+               <td class="{{away_team}}"></td>
+               <td>@</td>
+               <td class="{{home_team}}"></td>
+            </tr>
+         </table>
+         <div>{{game_time}}
       </script>
       {% endraw %}
    

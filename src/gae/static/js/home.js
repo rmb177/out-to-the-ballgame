@@ -53,7 +53,8 @@
             source = $("#info-window").html();
             template = Handlebars.compile(source);
             context = {
-              teams: marker.title,
+              away_team: game.away_team_abbr,
+              home_team: game.home_team_abbr,
               game_time: game.game_time
             };
             google.maps.event.addListener(marker, 'click', function() {
@@ -70,8 +71,8 @@
         }
         return _results;
       },
-      error: function() {
-        return alert('Error retrieving games for the selected date.');
+      error: function(response) {
+        return console.log(response);
       }
     });
   };

@@ -35,19 +35,18 @@ displayGamesForDate = (date) ->
                   
                   source = $("#info-window").html()
                   template = Handlebars.compile(source)
-                  context = {teams: marker.title, game_time: game.game_time}
+                  context = {away_team: game.away_team_abbr, home_team: game.home_team_abbr, game_time: game.game_time}
                   google.maps.event.addListener(marker, 'click', ->
                      lastInfoWindow.close() if lastInfoWindow isnt null
                      lastInfoWindow = new google.maps.InfoWindow()
-                     #console.debug(html)
                      lastInfoWindow.setContent(template(context))
-                     #lastInfoWindow.setContent(marker.title + '<br />' + game.game_time)
                      lastInfoWindow.open(gMap, marker)
                      return false)
 
                   gGameMarkers.push(marker)
-         error: ->
-            alert('Error retrieving games for the selected date.')
+         error: (response) ->
+            console.log(response)
+            #alert('Error retrieving games for the selected date.')
        )
    
 initMap = ->
