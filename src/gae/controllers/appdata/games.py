@@ -43,7 +43,7 @@ class GamesHandler(webapp2.RequestHandler):
                         ' "away_team_abbr":"%s",'
                         ' "lat":"%f",'
                         ' "lon":"%f"}') % (
-                a_game.game_time.strftime('%I:%M %p'),
+                a_game.game_time.strftime('%I:%M %p EDT').lstrip("0"),
                 home_team.name,
                 home_team.name_abbr,
                 away_team.name,

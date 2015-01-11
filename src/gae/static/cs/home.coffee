@@ -6,15 +6,6 @@ gGameMarkers = []
 formatDate = (date) ->
    date.toJSON().slice(0, 10)
 
-getTemplateAjax = (path, callback) ->
-   $.ajax(
-      url: path,
-      success: (data) ->
-         source = data
-         template = Handlebars.compile(source);
-         callback(template) if callback
-   )
-
 dateChanged = ->
    displayGamesForDate(formatDate(new Date($("#datepicker").val())))
 

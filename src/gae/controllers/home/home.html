@@ -36,12 +36,14 @@
       <script id="info-window" type="text/x-handlebars-template">
          <table valign="middle">
             <tr>
-               <td class="{{away_team}}"></td>
+               <td><div class="{{away_team}}"></div></td>
                <td>@</td>
-               <td class="{{home_team}}"></td>
+               <td><div class="{{home_team}}" /></div></td>
+            </tr>
+            <tr>
+               <td colspan="3" align="center"><div>{{game_time}}</div></td>
             </tr>
          </table>
-         <div>{{game_time}}
       </script>
       {% endraw %}
    
