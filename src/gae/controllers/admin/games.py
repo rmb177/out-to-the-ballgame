@@ -10,6 +10,7 @@ datastore
 
 import csv
 import datetime
+import logging
 import os
 import re
 import time
@@ -67,7 +68,7 @@ class AdminTeamGamesHandler(webapp2.RequestHandler):
             reader = csv.reader(schedule)
 
             home_team = self.__get_home_team(file_name)
-
+            logging.debug(home_team.name)
             for row in reader:
                 if home_team.stadium_name == row[LOCATION_INDEX]:
                     away_team = self.__get_away_team(row[TEAMS_INDEX])
@@ -119,7 +120,9 @@ class AdminTeamGamesHandler(webapp2.RequestHandler):
         All times are read in as Eastern and converted to UTC
         """
         datetime_str = '%s %s' %(date_str, time_str)
+        logging.debug(datetime_str)
         game_time = time.strptime(datetime_str, '%m/%d/%y %I:%M %p')
+        logging.debug(game_time)
         return datetime.datetime.fromtimestamp(time.mktime(game_time))
 
 

@@ -6,6 +6,12 @@ gGameMarkers = []
 formatDate = (date) ->
    date.toJSON().slice(0, 10)
 
+getInitialMapDate = ->
+   openingDay = new Date("4/5/2015")
+   today = new Date
+   mapDate = if today > openingDay then today else openingDay
+   mapDate
+   
 dateChanged = ->
    displayGamesForDate(formatDate(new Date($("#datepicker").val())))
 
@@ -33,14 +39,14 @@ displayGamesForDate = (date) ->
                      lastInfoWindow.setContent(template(context))
                      lastInfoWindow.open(gMap, marker)
                      return false)
-
                   gGameMarkers.push(marker)
+                  
          error: (response) ->
-            console.log(response)
-            #alert('Error retrieving games for the selected date.')
+            alert('Error retrieving games for the selected date.')
        )
    
 initMap = ->
+   
    options = 
       center: new google.maps.LatLng(39.8111444,-98.5569364),
       zoom: 4,
@@ -51,21 +57,26 @@ initMap = ->
          elementType: "labels",
          stylers: [visibility: "off"]
       ]
-
+   
    gMap = new google.maps.Map(document.getElementById("schedule-map"), options)
-   displayGamesForDate(new Date().toJSON().slice(0, 10))
    
    source = $("#trip-controls").html()
    template = Handlebars.compile(source)
    gMap.controls[google.maps.ControlPosition.TOP_RIGHT].push($(template())[0])
-           
-   # TODO: Revisit this...has to be a better way
-   setTimeout(-> 
-      $("#datepicker").datepicker()
-      $("#datepicker").change(dateChanged)
-         
+
+  
+   # TODO: Revisit this...has to be a better way. jQuery doesn't seem to be
+   # able to find the datepicker component until some time has passed. Is there
+   # a delay when adding the template to the map??
+   setTimeout(->
+      datepicker = $("#datepicker")
+      datepicker.datepicker()
+      datepicker.datepicker("setDate", getInitialMapDate())
+      dateChanged()
+      datepicker.change(dateChanged)
+   
       # preventing keyboard-entered dates
-      $("#datepicker").keyup( (event)->
+      datepicker.keyup( (event)->
          false)
     1000)
 
