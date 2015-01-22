@@ -1,6 +1,12 @@
-td
+#itinerary-window
 {
-    border-style: none;
+    height: 100%;
+    background-color: white;
+}
+
+.select-game-link
+{
+    text-align: right;
 }
 
 .ana

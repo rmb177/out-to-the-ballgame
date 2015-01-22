@@ -27,8 +27,10 @@
       {% raw %}
       <!-- template for trip ui component -->
       <script id="trip-controls" type="text/x-handlebars-template">
-         <div>
+         <div id="itinerary-window">
             <p>Date: <input type="text" id="datepicker"></p>
+            <div id="itineraryDiv">
+            </div>
          </div>
       </script>
       
@@ -44,12 +46,24 @@
                <td colspan="3" align="center"><div>{{game_time}}</div></td>
             </tr>
          </table>
+         {{#if displaySelectGameLink}}
+            <div class="select-game-link">
+               <a href="" id="{{game_id}}">Select</a>
+            </div>
+         {{/if}}
       </script>
       {% endraw %}
+      
+      <script type="text/javascript">
+         window.ottb = {}
+      </script>
    
       <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD_MuISxqQ50eQiqJcibWvx3Tz4oByx69o&amp;sensor=true"></script>
       <script type="text/javascript" src="/static/js/jquery-2.1.0.min.js"></script>
       <script type="text/javascript" src="/static/jquery-ui-1.10.4/js/jquery-ui-1.10.4.min.js"></script>
+      
+      <script type="text/javascript" src="/static/js/cache.js"></script>
+      <script type="text/javascript" src="/static/js/itinerary.js"></script>
       <script type="text/javascript" src="/static/js/home.js"></script>
    </body>
 </html>
