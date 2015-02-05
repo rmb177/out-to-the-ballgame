@@ -25,12 +25,17 @@
       <script type="text/javascript" src="/static/js/handlebars-v1.3.0.js"></script>
       
       {% raw %}
-      <!-- template for trip ui component -->
-      <script id="trip-controls" type="text/x-handlebars-template">
-         <div id="itinerary-window">
-            <p>Date: <input type="text" id="datepicker"></p>
-            <div id="itineraryDiv">
-            </div>
+      <!-- template for datepicker ui component -->
+      <script id="datePickerUi" type="text/x-handlebars-template">
+         <div>
+            <input type="text" id="datepicker"></p>
+         </div>
+      </script>
+      
+      <!-- template for itinerary ui component -->
+      <script id="itineraryUi" type="text/x-handlebars-template">
+         <div id="itinerary">
+            <p>Itinerary</p>
          </div>
       </script>
       
@@ -62,8 +67,12 @@
       <script type="text/javascript" src="/static/js/jquery-2.1.0.min.js"></script>
       <script type="text/javascript" src="/static/jquery-ui-1.10.4/js/jquery-ui-1.10.4.min.js"></script>
       
+      <script type="text/javascript" src="/static/js/communication.js"></script>
       <script type="text/javascript" src="/static/js/cache.js"></script>
+      <script type="text/javascript" src="/static/js/datepicker.js"></script>
       <script type="text/javascript" src="/static/js/itinerary.js"></script>
+      <script type="text/javascript" src="/static/js/map_options.js"></script>
+      <script type="text/javascript" src="/static/js/map.js"></script>
       <script type="text/javascript" src="/static/js/home.js"></script>
    </body>
 </html>

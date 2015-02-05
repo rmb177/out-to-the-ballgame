@@ -6,13 +6,37 @@
     Itinerary.name = 'Itinerary';
 
     function Itinerary(callback) {
+      var source;
       this.itinerary = new Array;
       this.drawItineraryCallback = callback;
+      source = $("#itineraryUi").html();
+      this.template = Handlebars.compile(source);
     }
 
+    Itinerary.prototype.addToMap = function(map) {
+      return map.addItinerary($(this.template())[0]);
+    };
+
     Itinerary.prototype.addGame = function(game) {
+      var context, source, template, _i, _len, _ref, _results;
       this.itinerary.push(game);
-      return this.drawItineraryCallback(this.itinerary);
+      $("#itinerary").empty();
+      _ref = this.itinerary;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        game = _ref[_i];
+        source = $("#info-window").html();
+        template = Handlebars.compile(source);
+        context = {
+          game_id: game.id,
+          away_team: game.away_team_abbr,
+          home_team: game.home_team_abbr,
+          game_time: game.game_time,
+          displaySelectGameLink: false
+        };
+        _results.push($("#itinerary").append(template(context)));
+      }
+      return _results;
     };
 
     return Itinerary;

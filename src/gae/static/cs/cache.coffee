@@ -6,8 +6,9 @@ class ottb.Cache
    constructor: () ->
       @gameCache = new Object
 
-   addGame: (game) ->
-      @gameCache[game.id] = game
+   addGames: (games) ->
+      for game in games
+         @gameCache[game.id] = game
 
    getGame: (gameId) ->
       @gameCache[gameId]

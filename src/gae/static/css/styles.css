@@ -1,7 +1,16 @@
-#itinerary-window
+#datepicker
 {
-    height: 100%;
+    background-color: #5e94ff;
+    height: 2em;
+    width: 25em;
+}
+
+#itinerary
+{
     background-color: white;
+    height: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .select-game-link
