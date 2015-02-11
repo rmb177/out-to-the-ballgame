@@ -12,6 +12,7 @@ formatDate = (date) ->
 
 # Callback method for when the user selects a new date  
 dateChangedCallback = (date) ->
+   date.setFullYear(2015)
    gCommunication.retrieveGamesForDate(formatDate(date), gamesRetrievedCallback)
 
 # Callback method for when games have been retrieved from the server

@@ -11,6 +11,7 @@
       this.setupSelectLinkListener = __bind(this.setupSelectLinkListener, this);
       this.map = new google.maps.Map(document.getElementById("schedule-map"), gMapOptions);
       this.gameMarkers = {};
+      this.lastInfoWindow = null;
       this.selectLinkCallback = selectLinkCallback;
       this.setupSelectLinkListener();
     }
@@ -24,25 +25,30 @@
     };
 
     Map.prototype.displayGames = function(games) {
-      var aMarker, game, gameId, lastInfoWindow, that, _i, _len, _ref, _results;
+      var aMarker, game, teamAbbr, that, _i, _len, _ref, _results;
       that = this;
       _ref = that.gameMarkers;
-      for (gameId in _ref) {
-        if (!__hasProp.call(_ref, gameId)) continue;
-        aMarker = _ref[gameId];
-        aMarker.setMap(null);
+      for (teamAbbr in _ref) {
+        if (!__hasProp.call(_ref, teamAbbr)) continue;
+        aMarker = _ref[teamAbbr];
+        that.fadeOutMarker(aMarker);
       }
-      lastInfoWindow = null;
+      that.lastInfoWindow = null;
       _results = [];
       for (_i = 0, _len = games.length; _i < _len; _i++) {
         game = games[_i];
         _results.push((function(game) {
           var context, marker, source, template;
-          marker = new google.maps.Marker({
-            position: new google.maps.LatLng(parseFloat(game.lat), parseFloat(game.lon)),
-            title: game.away_team + ' @ ' + game.home_team,
-            map: that.map
-          });
+          marker = that.gameMarkers[game.home_team_abbr];
+          if (!(marker != null)) {
+            marker = new google.maps.Marker({
+              position: new google.maps.LatLng(parseFloat(game.lat), parseFloat(game.lon)),
+              map: that.map,
+              opacity: 0
+            });
+          }
+          marker.setTitle(game.away_team + ' @ ' + game.home_team);
+          that.fadeInMarker(marker, 0);
           source = $("#info-window").html();
           template = Handlebars.compile(source);
           context = {
@@ -53,15 +59,15 @@
             displaySelectGameLink: true
           };
           google.maps.event.addListener(marker, 'click', function() {
-            if (lastInfoWindow !== null) {
-              lastInfoWindow.close();
+            if (that.lastInfoWindow !== null) {
+              that.lastInfoWindow.close();
             }
-            lastInfoWindow = new google.maps.InfoWindow();
-            lastInfoWindow.setContent(template(context));
-            lastInfoWindow.open(that.map, marker);
+            that.lastInfoWindow = new google.maps.InfoWindow();
+            that.lastInfoWindow.setContent(template(context));
+            that.lastInfoWindow.open(that.map, marker);
             return false;
           });
-          return that.gameMarkers[game.id] = marker;
+          return that.gameMarkers[game.home_team_abbr] = marker;
         })(game));
       }
       return _results;
@@ -71,9 +77,37 @@
       var that;
       that = this;
       return $(document).on("click", ".select-game-link a", function(event) {
+        if (that.lastInfoWindow !== null) {
+          that.lastInfoWindow.close();
+        }
         that.selectLinkCallback(this.id);
         return false;
       });
+    };
+
+    Map.prototype.fadeInMarker = function(marker, opacity) {
+      var that;
+      that = this;
+      return setTimeout(function() {
+        marker.setOpacity(opacity);
+        if (opacity < 1) {
+          return that.fadeInMarker(marker, opacity + .2);
+        }
+      }, 50);
+    };
+
+    Map.prototype.fadeOutMarker = function(marker) {
+      var opacity, that;
+      that = this;
+      opacity = marker.getOpacity();
+      if (Math.abs(opacity) < 0.000001) {
+        return marker.setOpacity(0);
+      } else {
+        marker.setOpacity(opacity - .2);
+        return setTimeout(function() {
+          return that.fadeOutMarker(marker);
+        }, 50);
+      }
     };
 
     return Map;

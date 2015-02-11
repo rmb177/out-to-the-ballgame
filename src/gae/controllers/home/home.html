@@ -26,10 +26,14 @@
       
       {% raw %}
       <!-- template for datepicker ui component -->
-      <script id="datePickerUi" type="text/x-handlebars-template">
-         <div>
-            <input type="text" id="datepicker"></p>
-         </div>
+      <script id="datepickerUi" type="text/x-handlebars-template">
+         <table id="datepickerUi">
+            <tr>
+               <td><img id="prevDayArrow" src="/static/images/left_arrow.png" /> </td>
+               <td><input type="text" id="datepicker"> </td>
+               <td><img id="nextDayArrow" src="/static/images/right_arrow.png" /> </td>
+            </tr>
+         </table>
       </script>
       
       <!-- template for itinerary ui component -->

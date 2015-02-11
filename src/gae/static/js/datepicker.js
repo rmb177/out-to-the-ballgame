@@ -9,18 +9,26 @@
 
     function Datepicker(dateChangedCallback) {
       var source;
-      source = $("#datePickerUi").html();
+      source = $("#datepickerUi").html();
       this.template = Handlebars.compile(source);
       this.dateChangedCallback = dateChangedCallback;
     }
 
     Datepicker.prototype.gotoNextDay = function() {
-      var currentDate, nextDay;
+      return this.moveOneDay(1);
+    };
+
+    Datepicker.prototype.gotoPrevDay = function() {
+      return this.moveOneDay(-1);
+    };
+
+    Datepicker.prototype.moveOneDay = function(forwardOrBackward) {
+      var currentDate, newDay;
       currentDate = new Date($("#datepicker").val());
-      nextDay = new Date(currentDate);
-      nextDay.setDate(currentDate.getDate() + 1);
-      this.datepicker.datepicker("setDate", nextDay);
-      return this.dateChangedCallback(nextDay);
+      newDay = new Date(currentDate);
+      newDay.setDate(currentDate.getDate() + forwardOrBackward);
+      this.datepicker.datepicker("setDate", newDay);
+      return this.dateChangedCallback(newDay);
     };
 
     Datepicker.prototype.getInitialMapDate = function() {
@@ -39,13 +47,20 @@
       return setTimeout(function() {
         _this.datepicker = $("#datepicker");
         _this.datepicker.datepicker();
+        _this.datepicker.datepicker("option", "dateFormat", "D, MM d");
         _this.datepicker.datepicker("setDate", _this.getInitialMapDate());
         _this.dateChangedCallback(new Date(_this.datepicker.val()));
         _this.datepicker.change(function(event) {
           return _this.dateChangedCallback(new Date(_this.datepicker.val()));
         });
-        return _this.datepicker.keyup(function(event) {
+        _this.datepicker.keyup(function(event) {
           return false;
+        });
+        $("#prevDayArrow").on("click", function() {
+          return _this.gotoPrevDay();
+        });
+        return $("#nextDayArrow").on("click", function() {
+          return _this.gotoNextDay();
         });
       }, 1000);
     };

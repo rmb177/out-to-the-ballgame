@@ -1,8 +1,28 @@
+#datepickerUi
+{
+    margin-top: 10px;
+}
+
+#datepickerUi td
+{
+    padding-right: 10px;
+    vertical-align: middle;
+}
+
 #datepicker
 {
     background-color: #5e94ff;
+    color: white;
+    font-size: 2em;
+    font-weight: bold;
     height: 2em;
-    width: 25em;
+    text-align: center;
+    width: 12em;
+    
+    border:solid 1px #5e94ff;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
 }
 
 #itinerary

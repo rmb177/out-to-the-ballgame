@@ -6,17 +6,23 @@ class ottb.Datepicker
    @openingDay = new Date("4/5/2015")
    
    constructor: (dateChangedCallback) ->
-      source = $("#datePickerUi").html()
+      source = $("#datepickerUi").html()
       @template = Handlebars.compile(source)
-      
       @dateChangedCallback = dateChangedCallback
       
    gotoNextDay: () ->
+      @moveOneDay(1)
+      
+   gotoPrevDay: () ->
+      @moveOneDay(-1)
+
+   moveOneDay: (forwardOrBackward) ->
       currentDate = new Date($("#datepicker").val())
-      nextDay = new Date(currentDate)
-      nextDay.setDate(currentDate.getDate() + 1)
-      @datepicker.datepicker("setDate", nextDay)
-      @dateChangedCallback(nextDay)
+      newDay = new Date(currentDate)
+      newDay.setDate(currentDate.getDate() + forwardOrBackward)
+      @datepicker.datepicker("setDate", newDay)
+      @dateChangedCallback(newDay)
+      
       
    # Return the initial date we should load on the map. Opening Day if the current date is before 
    # Opening Day, otherwise the current date
@@ -33,6 +39,7 @@ class ottb.Datepicker
       setTimeout( =>
          @datepicker = $("#datepicker")
          @datepicker.datepicker()
+         @datepicker.datepicker("option", "dateFormat", "D, MM d")
          @datepicker.datepicker("setDate", @getInitialMapDate())
          @dateChangedCallback(new Date(@datepicker.val()))
          @datepicker.change( (event) =>
@@ -41,6 +48,14 @@ class ottb.Datepicker
          # preventing keyboard-entered dates
          @datepicker.keyup( (event) ->
             false)
+         
+         $("#prevDayArrow").on("click",  =>
+            @gotoPrevDay()
+         )
+      
+         $("#nextDayArrow").on("click", =>
+            @gotoNextDay()
+         )
        1000)
    
    

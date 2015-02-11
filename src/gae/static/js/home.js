@@ -17,6 +17,7 @@
   };
 
   dateChangedCallback = function(date) {
+    date.setFullYear(2015);
     return gCommunication.retrieveGamesForDate(formatDate(date), gamesRetrievedCallback);
   };
 
