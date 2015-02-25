@@ -9,7 +9,7 @@
       var source;
       this.itinerary = new Array;
       this.drawItineraryCallback = callback;
-      source = $("#itineraryUi").html();
+      source = $("#itinerary-ui").html();
       this.template = Handlebars.compile(source);
     }
 
@@ -18,25 +18,23 @@
     };
 
     Itinerary.prototype.addGame = function(game) {
-      var context, source, template, _i, _len, _ref, _results;
+      var context, source, table, template, _i, _len, _ref;
       this.itinerary.push(game);
       $("#itinerary").empty();
+      table = $("<table>");
       _ref = this.itinerary;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         game = _ref[_i];
-        source = $("#info-window").html();
+        source = $("#itinerary-game").html();
         template = Handlebars.compile(source);
         context = {
           game_id: game.id,
           away_team: game.away_team_abbr,
-          home_team: game.home_team_abbr,
-          game_time: game.game_time,
-          displaySelectGameLink: false
+          home_team: game.home_team_abbr
         };
-        _results.push($("#itinerary").append(template(context)));
+        table.append(template(context));
       }
-      return _results;
+      return $("#itinerary").append(table);
     };
 
     return Itinerary;

@@ -45,7 +45,7 @@
   };
 
   window.gMapOptions = {
-    center: new google.maps.LatLng(39.8111444, -98.5569364),
+    center: new google.maps.LatLng(39.8111444, -88.5569364),
     zoom: 4,
     minZoom: 4,
     mapTypeId: google.maps.MapTypeId.ROADMAP,

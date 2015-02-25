@@ -3,10 +3,10 @@
 
 class ottb.Datepicker
    
-   @openingDay = new Date("4/5/2015")
+   @OPENING_DAY = new Date("4/5/2015")
    
    constructor: (dateChangedCallback) ->
-      source = $("#datepickerUi").html()
+      source = $("#datepicker-ui").html()
       @template = Handlebars.compile(source)
       @dateChangedCallback = dateChangedCallback
       
@@ -28,7 +28,7 @@ class ottb.Datepicker
    # Opening Day, otherwise the current date
    getInitialMapDate: () ->
       today = new Date
-      if today > Datepicker.openingDay then today else Datepicker.openingDay
+      if today > Datepicker.OPENING_DAY then today else Datepicker.OPENING_DAY
    
    # TODO: Revisit this...has to be a better way. jQuery doesn't seem to be
    # able to find the datepicker component until some time has passed. Is there
@@ -46,7 +46,7 @@ class ottb.Datepicker
             @dateChangedCallback(new Date(@datepicker.val())))
    
          # preventing keyboard-entered dates
-         @datepicker.keyup( (event) ->
+         @datepicker.keydown( (event) ->
             false)
          
          $("#prevDayArrow").on("click",  =>

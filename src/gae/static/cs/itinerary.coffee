@@ -6,7 +6,7 @@ class ottb.Itinerary
       @itinerary = new Array
       @drawItineraryCallback = callback
       
-      source = $("#itineraryUi").html()
+      source = $("#itinerary-ui").html()
       @template = Handlebars.compile(source)
       
    addToMap: (map) ->
@@ -17,14 +17,13 @@ class ottb.Itinerary
       
       # Draw the current itinerary
       $("#itinerary").empty()
+      table = $("<table>")
       for game in @itinerary
-         source = $("#info-window").html()
+         source = $("#itinerary-game").html()
          template = Handlebars.compile(source)
          context =
             game_id: game.id,
             away_team: game.away_team_abbr, 
             home_team: game.home_team_abbr, 
-            game_time: game.game_time
-            displaySelectGameLink: false
-         
-         $("#itinerary").append(template(context))      
+         table.append(template(context))
+      $("#itinerary").append(table)

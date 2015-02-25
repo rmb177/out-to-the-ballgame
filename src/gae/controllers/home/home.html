@@ -26,8 +26,8 @@
       
       {% raw %}
       <!-- template for datepicker ui component -->
-      <script id="datepickerUi" type="text/x-handlebars-template">
-         <table id="datepickerUi">
+      <script id="datepicker-ui" type="text/x-handlebars-template">
+         <table id="datepicker-ui">
             <tr>
                <td><img id="prevDayArrow" src="/static/images/left_arrow.png" /> </td>
                <td><input type="text" id="datepicker"> </td>
@@ -37,11 +37,21 @@
       </script>
       
       <!-- template for itinerary ui component -->
-      <script id="itineraryUi" type="text/x-handlebars-template">
+      <script id="itinerary-ui" type="text/x-handlebars-template">
          <div id="itinerary">
             <p>Itinerary</p>
          </div>
       </script>
+      
+      <!-- template for game display in itinerary -->
+      <script id="itinerary-game" type="text/x-handlebars-template">
+         <tr>
+            <td align="center"><div class="{{away_team}}"></div></td>
+            <td align="center">@</td>
+            <td align="center"><div class="{{home_team}}"></div></td>
+         </tr>
+      </script>
+      
       
       <!-- template for game info window -->
       <script id="info-window" type="text/x-handlebars-template">
@@ -49,7 +59,7 @@
             <tr>
                <td><div class="{{away_team}}"></div></td>
                <td>@</td>
-               <td><div class="{{home_team}}" /></div></td>
+               <td><div class="{{home_team}}"></div></td>
             </tr>
             <tr>
                <td colspan="3" align="center"><div>{{game_time}}</div></td>

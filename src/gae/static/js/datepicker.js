@@ -5,11 +5,11 @@
 
     Datepicker.name = 'Datepicker';
 
-    Datepicker.openingDay = new Date("4/5/2015");
+    Datepicker.OPENING_DAY = new Date("4/5/2015");
 
     function Datepicker(dateChangedCallback) {
       var source;
-      source = $("#datepickerUi").html();
+      source = $("#datepicker-ui").html();
       this.template = Handlebars.compile(source);
       this.dateChangedCallback = dateChangedCallback;
     }
@@ -34,10 +34,10 @@
     Datepicker.prototype.getInitialMapDate = function() {
       var today;
       today = new Date;
-      if (today > Datepicker.openingDay) {
+      if (today > Datepicker.OPENING_DAY) {
         return today;
       } else {
-        return Datepicker.openingDay;
+        return Datepicker.OPENING_DAY;
       }
     };
 
@@ -53,7 +53,7 @@
         _this.datepicker.change(function(event) {
           return _this.dateChangedCallback(new Date(_this.datepicker.val()));
         });
-        _this.datepicker.keyup(function(event) {
+        _this.datepicker.keydown(function(event) {
           return false;
         });
         $("#prevDayArrow").on("click", function() {
