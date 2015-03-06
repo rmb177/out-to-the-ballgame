@@ -8,6 +8,9 @@ class ottb.Itinerary
       
       source = $("#itinerary-ui").html()
       @template = Handlebars.compile(source)
+   
+   getGames: () ->
+      @itinerary.slice()
       
    addToMap: (map) ->
       map.addItinerary($(@template())[0])

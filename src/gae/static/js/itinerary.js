@@ -13,6 +13,10 @@
       this.template = Handlebars.compile(source);
     }
 
+    Itinerary.prototype.getGames = function() {
+      return this.itinerary.slice();
+    };
+
     Itinerary.prototype.addToMap = function(map) {
       return map.addItinerary($(this.template())[0]);
     };

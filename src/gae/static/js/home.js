@@ -23,7 +23,7 @@
 
   gamesRetrievedCallback = function(games) {
     gCache.addGames(games);
-    return gMap.displayGames(games);
+    return gMap.displayGames(games, gItinerary.getGames());
   };
 
   selectLinkCallback = function(gameId) {

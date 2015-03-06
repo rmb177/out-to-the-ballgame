@@ -25,6 +25,16 @@
     border-radius: 15px;
 }
 
+#prevDayArrow
+{
+    cursor: pointer;
+}
+
+#nextDayArrow
+{
+    cursor: pointer;
+}
+
 #itinerary
 {
     background-color: white;

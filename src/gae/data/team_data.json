@@ -28,7 +28,7 @@
       {"mlbId": 137,  "name": "Giants",       "nameAbbr": "sf",   "league": "NL",     "division": "West",     "stadiumName": "AT&T Park",                        "lat": 37.779350,     "lon": -122.38961  },
       {"mlbId": 138,  "name": "Cardinals",    "nameAbbr": "stl",  "league": "NL",     "division": "Central",  "stadiumName": "Busch Stadium",                    "lat": 38.622331,     "lon": -90.192468  },
       {"mlbId": 139,  "name": "Rays",         "nameAbbr": "tb",   "league": "AL",     "division": "East",     "stadiumName": "Tropicana Field",                  "lat": 27.768507,     "lon": -82.65152   },
-      {"mlbId": 140,  "name": "Rangers",      "nameAbbr": "tex",  "league": "AL",     "division": "West",     "stadiumName": "Globe Life Park in Arlington",    "lat": 32.750336,     "lon": -97.081577  },
+      {"mlbId": 140,  "name": "Rangers",      "nameAbbr": "tex",  "league": "AL",     "division": "West",     "stadiumName": "Globe Life Park in Arlington",     "lat": 32.750336,     "lon": -97.081577  },
       {"mlbId": 141,  "name": "Blue Jays",    "nameAbbr": "tor",  "league": "AL",     "division": "East",     "stadiumName": "Rogers Centre",                    "lat": 43.641602,     "lon": -79.38922   },
       {"mlbId": 120,  "name": "Nationals",    "nameAbbr": "was",  "league": "NL",     "division": "East",     "stadiumName": "Nationals Park",                   "lat": 38.874296,     "lon": -77.00753   }
    ]

@@ -18,7 +18,7 @@ dateChangedCallback = (date) ->
 # Callback method for when games have been retrieved from the server
 gamesRetrievedCallback = (games) ->
    gCache.addGames(games)
-   gMap.displayGames(games)
+   gMap.displayGames(games, gItinerary.getGames())
    
 # Callback method for when a "Select" link has been clicked
 # in an info window. Add the game to the itinerary and
