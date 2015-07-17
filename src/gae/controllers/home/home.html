@@ -65,9 +65,15 @@
                <td colspan="3" align="center"><div>{{game_time}}</div></td>
             </tr>
          </table>
-         <div class="select-game-link">
-            <a href="" id="{{game_id}}">Select</a>
-         </div>
+         {{#if is_attending}}
+            <div class="remove-game-link">
+               <a href="" id="{{game_id}}">Remove</a>
+            </div>
+         {{else}}
+            <div class="select-game-link">
+               <a href="" id="{{game_id}}">Select</a>
+            </div>
+         {{/if}}
       </script>
       {% endraw %}
       

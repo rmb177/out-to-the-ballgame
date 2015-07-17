@@ -4,13 +4,18 @@
 class ottb.Map
 
    # Creates and adds the map to the page
-   constructor: (selectLinkCallback) ->   
+   constructor: (selectLinkCallback, removeLinkCallback) ->   
       @map = new google.maps.Map(document.getElementById("schedule-map"), gMapOptions)
       @gameMarkers = {}
       @displayedGames = {}
       @lastInfoWindow = null
+      
       @selectLinkCallback = selectLinkCallback
       @setupSelectLinkListener()
+      
+      @removeLinkCallback = removeLinkCallback
+      @setupRemoveLinkListener()
+      
       @animateMarkers()
       
    addDatePicker: (datePickerHtml) ->
@@ -31,11 +36,12 @@ class ottb.Map
       for gameAttending in gamesAttending
          @gameMarkers[gameAttending.home_team_abbr].setOpacity(1)
       
-      # Fade out currently displayed games if they are not in the new list of
-      # games to display and are not in the current itinerary
+      # Keep marker if game is already in itinerary or already marks a stadium for
+      # new games to display
       for own teamAbbr, displayedGame of @displayedGames
-         keepIt = newGames.some( (newbGame) -> newbGame.home_team_abbr == displayedGame.home_team_abbr) or
-                  gamesAttending.some( (gameAttending) -> gameAttending.home_team_abbr == displayedGame.home_team_abbr)
+         keepIt = newGames.some( (newGame) -> newGame.home_team_abbr == displayedGame.home_team_abbr) or
+                  @isAttending(displayedGame, gamesAttending)
+                  #gamesAttending.some( (gameAttending) -> gameAttending.home_team_abbr == displayedGame.home_team_abbr)
                            
          if not keepIt
             @fadeOutMarker(@gameMarkers[displayedGame.home_team_abbr])
@@ -43,6 +49,7 @@ class ottb.Map
             
       for newGame in newGames
          do (newGame) =>
+         
             # Create marker if it doesn't yet exist
             marker = @gameMarkers[newGame.home_team_abbr]
             if not marker
@@ -53,7 +60,10 @@ class ottb.Map
                   optimized: false
                   opacities: []
             
-            if not gamesAttending.some( (gameAttending) -> gameAttending.home_team_abbr == newGame.home_team_abbr)
+            # If the marker is for a city not already in the itinerary, add it to the maps and update
+            # the info window
+            #if not gamesAttending.some( (gameAttending) -> gameAttending.home_team_abbr == newGame.home_team_abbr)
+            if not @isAttending(newGame, gamesAttending)
                marker.setTitle(newGame.away_team_name + ' @ ' + newGame.home_team_name)
                   
                # Add info window 
@@ -64,6 +74,7 @@ class ottb.Map
                   away_team: newGame.away_team_abbr, 
                   home_team: newGame.home_team_abbr, 
                   game_time: newGame.game_time
+                  is_attending: false
                
                google.maps.event.clearInstanceListeners(marker)
                google.maps.event.addListener(marker, 'click', =>
@@ -76,7 +87,29 @@ class ottb.Map
                @fadeInMarker(marker) if not @displayedGames[newGame.home_team_abbr]?
                @gameMarkers[newGame.home_team_abbr] = marker
                @displayedGames[newGame.home_team_abbr] = newGame
+            else
+               source = $("#info-window").html()
+               template = Handlebars.compile(source)
+               context =
+                  game_id: newGame.id,
+                  away_team: newGame.away_team_abbr, 
+                  home_team: newGame.home_team_abbr, 
+                  game_time: newGame.game_time
+                  is_attending: true
+                  
+               google.maps.event.clearInstanceListeners(marker)
+               google.maps.event.addListener(marker, 'click', =>
+                  @lastInfoWindow.close() if @lastInfoWindow isnt null
+                  @lastInfoWindow = new google.maps.InfoWindow()
+                  @lastInfoWindow.setContent(template(context))
+                  @lastInfoWindow.open(@map, marker)
+                  return false)
+               
 
+
+   # return whether or not user is attending given game 
+   isAttending: (game, gamesAttending) ->
+      gamesAttending.some( (attendedGame) -> attendedGame.home_team_abbr == game.home_team_abbr)
    
    # Background listener that attaches listener functions
    # to all of the "Select" links in a game info window.
@@ -85,6 +118,16 @@ class ottb.Map
       $(document).on("click", ".select-game-link a", (event) ->
          that.lastInfoWindow.close() if that.lastInfoWindow isnt null
          that.selectLinkCallback(this.id)
+         false
+      )
+      
+   # Background listener that attaches listener functions
+   # to all of the "Remove" links in a game info window.
+   setupRemoveLinkListener: () ->
+      that = this
+      $(document).on("click", ".remove-game-link a", (event) ->
+         that.lastInfoWindow.close() if that.lastInfoWindow isnt null
+         that.removeLinkCallback(this.id)
          false
       )
       

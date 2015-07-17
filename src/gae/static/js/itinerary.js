@@ -41,6 +41,33 @@
       return $("#itinerary").append(table);
     };
 
+    Itinerary.prototype.removeGame = function(gameToDelete) {
+      var context, game, i, source, table, template, _i, _j, _len, _len1, _ref, _ref1;
+      _ref = this.itinerary;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        game = _ref[i];
+        if (game.home_team_abbr === gameToDelete.home_team_abbr) {
+          this.itinerary.splice(i, 1);
+          break;
+        }
+      }
+      $("#itinerary").empty();
+      table = $("<table>");
+      _ref1 = this.itinerary;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        game = _ref1[_j];
+        source = $("#itinerary-game").html();
+        template = Handlebars.compile(source);
+        context = {
+          game_id: game.id,
+          away_team: game.away_team_abbr,
+          home_team: game.home_team_abbr
+        };
+        table.append(template(context));
+      }
+      return $("#itinerary").append(table);
+    };
+
     return Itinerary;
 
   })();

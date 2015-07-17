@@ -7,7 +7,7 @@
 
     Map.name = 'Map';
 
-    function Map(selectLinkCallback) {
+    function Map(selectLinkCallback, removeLinkCallback) {
       this.animateMarkers = __bind(this.animateMarkers, this);
       this.map = new google.maps.Map(document.getElementById("schedule-map"), gMapOptions);
       this.gameMarkers = {};
@@ -15,6 +15,8 @@
       this.lastInfoWindow = null;
       this.selectLinkCallback = selectLinkCallback;
       this.setupSelectLinkListener();
+      this.removeLinkCallback = removeLinkCallback;
+      this.setupRemoveLinkListener();
       this.animateMarkers();
     }
 
@@ -41,11 +43,9 @@
       for (teamAbbr in _ref) {
         if (!__hasProp.call(_ref, teamAbbr)) continue;
         displayedGame = _ref[teamAbbr];
-        keepIt = newGames.some(function(newbGame) {
-          return newbGame.home_team_abbr === displayedGame.home_team_abbr;
-        }) || gamesAttending.some(function(gameAttending) {
-          return gameAttending.home_team_abbr === displayedGame.home_team_abbr;
-        });
+        keepIt = newGames.some(function(newGame) {
+          return newGame.home_team_abbr === displayedGame.home_team_abbr;
+        }) || this.isAttending(displayedGame, gamesAttending);
         if (!keepIt) {
           this.fadeOutMarker(this.gameMarkers[displayedGame.home_team_abbr]);
           delete this.displayedGames[displayedGame.home_team_abbr];
@@ -66,9 +66,7 @@
               opacities: []
             });
           }
-          if (!gamesAttending.some(function(gameAttending) {
-            return gameAttending.home_team_abbr === newGame.home_team_abbr;
-          })) {
+          if (!_this.isAttending(newGame, gamesAttending)) {
             marker.setTitle(newGame.away_team_name + ' @ ' + newGame.home_team_name);
             source = $("#info-window").html();
             template = Handlebars.compile(source);
@@ -76,7 +74,8 @@
               game_id: newGame.id,
               away_team: newGame.away_team_abbr,
               home_team: newGame.home_team_abbr,
-              game_time: newGame.game_time
+              game_time: newGame.game_time,
+              is_attending: false
             };
             google.maps.event.clearInstanceListeners(marker);
             google.maps.event.addListener(marker, 'click', function() {
@@ -93,10 +92,36 @@
             }
             _this.gameMarkers[newGame.home_team_abbr] = marker;
             return _this.displayedGames[newGame.home_team_abbr] = newGame;
+          } else {
+            source = $("#info-window").html();
+            template = Handlebars.compile(source);
+            context = {
+              game_id: newGame.id,
+              away_team: newGame.away_team_abbr,
+              home_team: newGame.home_team_abbr,
+              game_time: newGame.game_time,
+              is_attending: true
+            };
+            google.maps.event.clearInstanceListeners(marker);
+            return google.maps.event.addListener(marker, 'click', function() {
+              if (_this.lastInfoWindow !== null) {
+                _this.lastInfoWindow.close();
+              }
+              _this.lastInfoWindow = new google.maps.InfoWindow();
+              _this.lastInfoWindow.setContent(template(context));
+              _this.lastInfoWindow.open(_this.map, marker);
+              return false;
+            });
           }
         })(newGame));
       }
       return _results;
+    };
+
+    Map.prototype.isAttending = function(game, gamesAttending) {
+      return gamesAttending.some(function(attendedGame) {
+        return attendedGame.home_team_abbr === game.home_team_abbr;
+      });
     };
 
     Map.prototype.setupSelectLinkListener = function() {
@@ -107,6 +132,18 @@
           that.lastInfoWindow.close();
         }
         that.selectLinkCallback(this.id);
+        return false;
+      });
+    };
+
+    Map.prototype.setupRemoveLinkListener = function() {
+      var that;
+      that = this;
+      return $(document).on("click", ".remove-game-link a", function(event) {
+        if (that.lastInfoWindow !== null) {
+          that.lastInfoWindow.close();
+        }
+        that.removeLinkCallback(this.id);
         return false;
       });
     };

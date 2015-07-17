@@ -12,7 +12,16 @@
       source = $("#datepicker-ui").html();
       this.template = Handlebars.compile(source);
       this.dateChangedCallback = dateChangedCallback;
+      this.currentYear = new Date().getFullYear();
     }
+
+    Datepicker.prototype.reloadCurrentDay = function() {
+      var currentDate, newDay;
+      currentDate = new Date($("#datepicker").val());
+      currentDate.setFullYear(this.currentYear);
+      newDay = new Date(currentDate);
+      return this.dateChangedCallback(newDay);
+    };
 
     Datepicker.prototype.gotoNextDay = function() {
       return this.moveOneDay(1);
@@ -25,6 +34,7 @@
     Datepicker.prototype.moveOneDay = function(forwardOrBackward) {
       var currentDate, newDay;
       currentDate = new Date($("#datepicker").val());
+      currentDate.setFullYear(this.currentYear);
       newDay = new Date(currentDate);
       newDay.setDate(currentDate.getDate() + forwardOrBackward);
       this.datepicker.datepicker("setDate", newDay);

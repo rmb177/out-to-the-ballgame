@@ -26,6 +26,14 @@ gamesRetrievedCallback = (games) ->
 selectLinkCallback = (gameId) ->
    gItinerary.addGame(gCache.getGame(gameId))
    gDatepicker.gotoNextDay()
+   
+
+# Callback method for when a "Remove" link has been clicked
+# in an info window. Remove the game from the intinerary and
+# reload the map for the current day
+removeLinkCallback = (gameId) ->
+   gItinerary.removeGame(gCache.getGame(gameId))
+   gDatepicker.reloadCurrentDay()
 
 
 initUI = ->   
@@ -33,7 +41,7 @@ initUI = ->
    gItinerary = new ottb.Itinerary()
    gCommunication = new ottb.Communication()
    gDatepicker = new ottb.Datepicker(dateChangedCallback)
-   gMap = new ottb.Map(selectLinkCallback)
+   gMap = new ottb.Map(selectLinkCallback, removeLinkCallback)
       
    gDatepicker.addToMap(gMap)
    gItinerary.addToMap(gMap)
