@@ -22,27 +22,12 @@
     };
 
     Itinerary.prototype.addGame = function(game) {
-      var context, source, table, template, _i, _len, _ref;
       this.itinerary.push(game);
-      $("#itinerary").empty();
-      table = $("<table>");
-      _ref = this.itinerary;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        game = _ref[_i];
-        source = $("#itinerary-game").html();
-        template = Handlebars.compile(source);
-        context = {
-          game_id: game.id,
-          away_team: game.away_team_abbr,
-          home_team: game.home_team_abbr
-        };
-        table.append(template(context));
-      }
-      return $("#itinerary").append(table);
+      return this.drawItinerary();
     };
 
     Itinerary.prototype.removeGame = function(gameToDelete) {
-      var context, game, i, source, table, template, _i, _j, _len, _len1, _ref, _ref1;
+      var game, i, _i, _len, _ref;
       _ref = this.itinerary;
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         game = _ref[i];
@@ -51,11 +36,16 @@
           break;
         }
       }
+      return this.drawItinerary();
+    };
+
+    Itinerary.prototype.drawItinerary = function() {
+      var context, game, source, table, template, _i, _len, _ref;
       $("#itinerary").empty();
       table = $("<table>");
-      _ref1 = this.itinerary;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        game = _ref1[_j];
+      _ref = this.itinerary;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        game = _ref[_i];
         source = $("#itinerary-game").html();
         template = Handlebars.compile(source);
         context = {

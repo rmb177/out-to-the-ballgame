@@ -7,6 +7,8 @@
 
     Map.name = 'Map';
 
+    Map.IS_ATTENDING = true;
+
     function Map(selectLinkCallback, removeLinkCallback) {
       this.animateMarkers = __bind(this.animateMarkers, this);
       this.map = new google.maps.Map(document.getElementById("schedule-map"), gMapOptions);
@@ -14,8 +16,8 @@
       this.displayedGames = {};
       this.lastInfoWindow = null;
       this.selectLinkCallback = selectLinkCallback;
-      this.setupSelectLinkListener();
       this.removeLinkCallback = removeLinkCallback;
+      this.setupSelectLinkListener();
       this.setupRemoveLinkListener();
       this.animateMarkers();
     }
@@ -29,89 +31,50 @@
     };
 
     Map.prototype.displayGames = function(newGames, gamesAttending) {
-      var displayedGame, gameAttending, keepIt, newGame, teamAbbr, _i, _j, _len, _len1, _ref, _results,
+      var displayedGame, marker, newGame, teamAbbr, _i, _len, _ref, _results,
         _this = this;
       if (this.lastInfoWindow !== null) {
         this.lastInfoWindow.close();
       }
       this.lastInfoWindow = null;
-      for (_i = 0, _len = gamesAttending.length; _i < _len; _i++) {
-        gameAttending = gamesAttending[_i];
-        this.gameMarkers[gameAttending.home_team_abbr].setOpacity(1);
-      }
       _ref = this.displayedGames;
       for (teamAbbr in _ref) {
         if (!__hasProp.call(_ref, teamAbbr)) continue;
         displayedGame = _ref[teamAbbr];
-        keepIt = newGames.some(function(newGame) {
+        if (this.isAttending(displayedGame, gamesAttending)) {
+          marker = this.gameMarkers[displayedGame.home_team_abbr];
+          marker.setIcon("/static/images/green-dot.png");
+          this.setupInfoWindow(displayedGame, marker, Map.IS_ATTENDING);
+        } else if (!newGames.some(function(newGame) {
           return newGame.home_team_abbr === displayedGame.home_team_abbr;
-        }) || this.isAttending(displayedGame, gamesAttending);
-        if (!keepIt) {
+        })) {
           this.fadeOutMarker(this.gameMarkers[displayedGame.home_team_abbr]);
           delete this.displayedGames[displayedGame.home_team_abbr];
         }
       }
       _results = [];
-      for (_j = 0, _len1 = newGames.length; _j < _len1; _j++) {
-        newGame = newGames[_j];
+      for (_i = 0, _len = newGames.length; _i < _len; _i++) {
+        newGame = newGames[_i];
         _results.push((function(newGame) {
-          var context, marker, source, template;
-          marker = _this.gameMarkers[newGame.home_team_abbr];
-          if (!marker) {
-            marker = new google.maps.Marker({
-              position: new google.maps.LatLng(parseFloat(newGame.lat), parseFloat(newGame.lon)),
-              map: _this.map,
-              opacity: 0,
-              optimized: false,
-              opacities: []
-            });
-          }
           if (!_this.isAttending(newGame, gamesAttending)) {
+            marker = _this.gameMarkers[newGame.home_team_abbr];
+            if (!marker) {
+              marker = new google.maps.Marker({
+                position: new google.maps.LatLng(parseFloat(newGame.lat), parseFloat(newGame.lon)),
+                map: _this.map,
+                opacity: 0,
+                optimized: false,
+                opacities: []
+              });
+            }
+            marker.setIcon("/static/images/red-dot.png");
             marker.setTitle(newGame.away_team_name + ' @ ' + newGame.home_team_name);
-            source = $("#info-window").html();
-            template = Handlebars.compile(source);
-            context = {
-              game_id: newGame.id,
-              away_team: newGame.away_team_abbr,
-              home_team: newGame.home_team_abbr,
-              game_time: newGame.game_time,
-              is_attending: false
-            };
-            google.maps.event.clearInstanceListeners(marker);
-            google.maps.event.addListener(marker, 'click', function() {
-              if (_this.lastInfoWindow !== null) {
-                _this.lastInfoWindow.close();
-              }
-              _this.lastInfoWindow = new google.maps.InfoWindow();
-              _this.lastInfoWindow.setContent(template(context));
-              _this.lastInfoWindow.open(_this.map, marker);
-              return false;
-            });
+            _this.setupInfoWindow(newGame, marker, !Map.IS_ATTENDING);
             if (!(_this.displayedGames[newGame.home_team_abbr] != null)) {
               _this.fadeInMarker(marker);
             }
             _this.gameMarkers[newGame.home_team_abbr] = marker;
             return _this.displayedGames[newGame.home_team_abbr] = newGame;
-          } else {
-            source = $("#info-window").html();
-            template = Handlebars.compile(source);
-            context = {
-              game_id: newGame.id,
-              away_team: newGame.away_team_abbr,
-              home_team: newGame.home_team_abbr,
-              game_time: newGame.game_time,
-              is_attending: true
-            };
-            google.maps.event.clearInstanceListeners(marker);
-            return google.maps.event.addListener(marker, 'click', function() {
-              if (_this.lastInfoWindow !== null) {
-                _this.lastInfoWindow.close();
-              }
-              _this.lastInfoWindow = new google.maps.InfoWindow();
-              _this.lastInfoWindow.setContent(template(context));
-              _this.lastInfoWindow.open(_this.map, marker);
-              return false;
-            });
           }
         })(newGame));
       }
@@ -148,13 +111,37 @@
       });
     };
 
+    Map.prototype.setupInfoWindow = function(game, marker, isAttending) {
+      var context, source, template,
+        _this = this;
+      source = $("#info-window").html();
+      template = Handlebars.compile(source);
+      context = {
+        game_id: game.id,
+        away_team: game.away_team_abbr,
+        home_team: game.home_team_abbr,
+        game_time: game.game_time,
+        is_attending: isAttending
+      };
+      google.maps.event.clearInstanceListeners(marker);
+      return google.maps.event.addListener(marker, 'click', function() {
+        if (_this.lastInfoWindow !== null) {
+          _this.lastInfoWindow.close();
+        }
+        _this.lastInfoWindow = new google.maps.InfoWindow();
+        _this.lastInfoWindow.setContent(template(context));
+        _this.lastInfoWindow.open(_this.map, marker);
+        return false;
+      });
+    };
+
     Map.prototype.fadeInMarker = function(marker) {
-      return marker.opacities = marker.opacities.concat([.1, .2, .3, .4, .5, .6]);
+      return marker.opacities = marker.opacities.concat([.2, .4, .6, .8, 1]);
     };
 
     Map.prototype.fadeOutMarker = function(marker) {
       if (marker.opacity > 0) {
-        return marker.opacities = marker.opacities.concat([.5, .4, .3, .2, .1, 0]);
+        return marker.opacities = marker.opacities.concat([.8, .6, .4, .2, 0]);
       }
     };
 
