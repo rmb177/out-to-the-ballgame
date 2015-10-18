@@ -19,6 +19,15 @@
       });
     };
 
+    Communication.prototype.retrieveTrips = function(callback) {
+      return $.ajax({
+        url: 'appdata/trips',
+        success: function(trips) {
+          return callback(trips);
+        }
+      });
+    };
+
     return Communication;
 
   })();

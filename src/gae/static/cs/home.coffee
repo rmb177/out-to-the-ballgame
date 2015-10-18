@@ -20,6 +20,10 @@ gamesRetrievedCallback = (games) ->
    gCache.addGames(games)
    gMap.displayGames(games, gItinerary.getGames())
    
+# Callback method for when trips have been retrieved from the server
+tripsRetrievedCallback = (trips) ->
+   gCache.addTrips(trips)
+   
 # Callback method for when a "Select" link has been clicked
 # in an info window. Add the game to the itinerary and
 # move to the next day.
@@ -39,10 +43,12 @@ removeLinkCallback = (gameId) ->
 initUI = ->   
    gCache = new ottb.Cache
    gItinerary = new ottb.Itinerary()
+   
    gCommunication = new ottb.Communication()
+   gCommunication.retrieveTrips(tripsRetrievedCallback)
+      
    gDatepicker = new ottb.Datepicker(dateChangedCallback)
    gMap = new ottb.Map(selectLinkCallback, removeLinkCallback)
-      
    gDatepicker.addToMap(gMap)
    gItinerary.addToMap(gMap)
 

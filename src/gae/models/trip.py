@@ -16,5 +16,5 @@ class Trip(ndb.Model):
     dest_team = ndb.KeyProperty(kind='Team')
     distance = ndb.IntegerProperty()    # in meters
     distance_desc = ndb.TextProperty()  # text representation in miles
-    duration = ndb.IntegerProperty      # in seconds
+    duration = ndb.IntegerProperty()    # in seconds
     duration_desc = ndb.TextProperty()  # text representation in hours

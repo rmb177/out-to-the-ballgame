@@ -55,6 +55,9 @@ handlers:
 - url: /appdata/games
   script: controllers.appdata.games.app
   
+- url: /appdata/trips
+  script: controllers.appdata.trips.app
+  
   
 ################################
 # Main page

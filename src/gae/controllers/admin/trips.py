@@ -82,7 +82,7 @@ class AdminTeamTripsHandler(webapp2.RequestHandler):
         req.add_header('Referer', 'https://out-to-the-ballgame.appspot.com/')
         response = urllib2.urlopen(req)
         trips_matrix = json.loads(response.read())
-
+        
         idx = 0
         for dest_team in dest_teams:
             query = trip.Trip.gql(
