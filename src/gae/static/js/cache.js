@@ -37,14 +37,22 @@
         if (!(destTeam != null)) {
           destTeam = new Object;
         }
-        destTeam["distance"] = trip.distance;
+        destTeam["distance"] = parseInt(trip.distance);
         destTeam["distance_desc"] = trip.distance_desc;
-        destTeam["duration"] = trip.duration;
+        destTeam["duration"] = parseInt(trip.duration);
         destTeam["duration_desc"] = trip.duration_desc;
         origTeam[trip.dest_team_id] = destTeam;
         _results.push(this.tripsCache[trip.orig_team_id] = origTeam);
       }
       return _results;
+    };
+
+    Cache.prototype.getTripDistance = function(origTeamId, destTeamId) {
+      return this.tripsCache[origTeamId][destTeamId]["distance"];
+    };
+
+    Cache.prototype.getTripDuration = function(origTeamId, destTeamId) {
+      return this.tripsCache[origTeamId][destTeamId]["duration"];
     };
 
     return Cache;

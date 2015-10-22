@@ -42,7 +42,7 @@
 
   initUI = function() {
     gCache = new ottb.Cache;
-    gItinerary = new ottb.Itinerary();
+    gItinerary = new ottb.Itinerary(gCache);
     gCommunication = new ottb.Communication();
     gCommunication.retrieveTrips(tripsRetrievedCallback);
     gDatepicker = new ottb.Datepicker(dateChangedCallback);

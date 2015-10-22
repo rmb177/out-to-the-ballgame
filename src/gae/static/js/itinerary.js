@@ -5,10 +5,16 @@
 
     Itinerary.name = 'Itinerary';
 
-    function Itinerary(callback) {
+    Itinerary.NUM_SECONDS_IN_DAY = 24 * 60 * 60;
+
+    Itinerary.NUM_SECONDS_IN_HOUR = 60 * 60;
+
+    function Itinerary(cache) {
       var source;
       this.itinerary = new Array;
-      this.drawItineraryCallback = callback;
+      this.duration = 0;
+      this.distance = 0;
+      this.cache = cache;
       source = $("#itinerary-ui").html();
       this.template = Handlebars.compile(source);
     }
@@ -23,6 +29,8 @@
 
     Itinerary.prototype.addGame = function(game) {
       this.itinerary.push(game);
+      this.itinerary.sort(this.sortGameByDay);
+      this.calculateTimeAndDistance();
       return this.drawItinerary();
     };
 
@@ -36,26 +44,62 @@
           break;
         }
       }
+      this.calculateTimeAndDistance();
       return this.drawItinerary();
     };
 
+    Itinerary.prototype.calculateTimeAndDistance = function() {
+      var game, i, prevGame, _i, _len, _ref, _results;
+      this.duration = 0;
+      this.distance = 0;
+      prevGame = null;
+      _ref = this.itinerary;
+      _results = [];
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        game = _ref[i];
+        if (0 === i) {
+          prevGame = game;
+          continue;
+        }
+        this.duration += this.cache.getTripDuration(prevGame.home_team_id, game.home_team_id);
+        this.distance += this.cache.getTripDistance(prevGame.home_team_id, game.home_team_id);
+        _results.push(prevGame = game);
+      }
+      return _results;
+    };
+
     Itinerary.prototype.drawItinerary = function() {
-      var context, game, source, table, template, _i, _len, _ref;
+      var context, distanceDurationSource, distanceDurationTemplate, game, gameSource, gameTemplate, numDays, numHours, table, _i, _len, _ref;
       $("#itinerary").empty();
       table = $("<table>");
+      gameSource = $("#itinerary-game").html();
+      gameTemplate = Handlebars.compile(gameSource);
+      if (this.itinerary.length > 1) {
+        numDays = Math.floor(this.duration / ottb.Itinerary.NUM_SECONDS_IN_DAY);
+        numHours = Math.round((this.duration - (numDays * ottb.Itinerary.NUM_SECONDS_IN_DAY)) / ottb.Itinerary.NUM_SECONDS_IN_HOUR);
+        distanceDurationSource = $("#itinerary-distance-duration").html();
+        distanceDurationTemplate = Handlebars.compile(distanceDurationSource);
+        context = {
+          distance: Math.round(this.distance / 1609.34) + " miles",
+          duration: numDays + " days " + numHours + " hours"
+        };
+        table.append(distanceDurationTemplate(context));
+      }
       _ref = this.itinerary;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         game = _ref[_i];
-        source = $("#itinerary-game").html();
-        template = Handlebars.compile(source);
         context = {
           game_id: game.id,
           away_team: game.away_team_abbr,
           home_team: game.home_team_abbr
         };
-        table.append(template(context));
+        table.append(gameTemplate(context));
       }
       return $("#itinerary").append(table);
+    };
+
+    Itinerary.prototype.sortGameByDay = function(game1, game2) {
+      return (game1.game_day > game2.game_day) - (game2.game_day > game1.game_day);
     };
 
     return Itinerary;

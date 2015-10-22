@@ -24,10 +24,16 @@ class ottb.Cache
          if !destTeam?
             destTeam = new Object
             
-         destTeam["distance"] = trip.distance
+         destTeam["distance"] = parseInt(trip.distance)
          destTeam["distance_desc"] = trip.distance_desc
-         destTeam["duration"] = trip.duration
+         destTeam["duration"] = parseInt(trip.duration)
          destTeam["duration_desc"] = trip.duration_desc
          
          origTeam[trip.dest_team_id] = destTeam
          @tripsCache[trip.orig_team_id] = origTeam
+         
+   getTripDistance: (origTeamId, destTeamId) ->
+      return @tripsCache[origTeamId][destTeamId]["distance"]
+      
+   getTripDuration: (origTeamId, destTeamId) ->
+      return @tripsCache[origTeamId][destTeamId]["duration"]

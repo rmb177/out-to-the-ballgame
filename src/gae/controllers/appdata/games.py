@@ -37,6 +37,7 @@ class GamesHandler(webapp2.RequestHandler):
             home_team = team.Team.get_by_id(a_game.home_team.id())
             away_team = team.Team.get_by_id(a_game.away_team.id())
             game_info = ('{"id":"%s",'
+                        ' "game_day":"%s",'
                         ' "game_time":"%s",'
                         ' "home_team_id":"%d",'
                         ' "home_team_name":"%s",'
@@ -47,6 +48,7 @@ class GamesHandler(webapp2.RequestHandler):
                         ' "lat":"%f",'
                         ' "lon":"%f"}') % (
                 a_game.key.id(),
+                self.request.get('date'),
                 a_game.game_time.strftime('%I:%M %p EDT').lstrip("0"),
                 a_game.home_team.id(),
                 home_team.name,
