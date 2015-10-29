@@ -10,15 +10,19 @@
     Itinerary.NUM_SECONDS_IN_HOUR = 60 * 60;
 
     function Itinerary(cache) {
-      var source;
+      var distanceDurationSource, gameSource, itinerarySource;
       this.itinerary = new Array;
       this.duration = 0;
       this.distance = 0;
       this.routes = [];
       this.cache = cache;
       this.polygon = void 0;
-      source = $("#itinerary-ui").html();
-      this.template = Handlebars.compile(source);
+      itinerarySource = $("#itinerary-ui").html();
+      this.itineraryTemplate = Handlebars.compile(itinerarySource);
+      gameSource = $("#itinerary-game").html();
+      this.gameTemplate = Handlebars.compile(gameSource);
+      distanceDurationSource = $("#itinerary-distance-duration").html();
+      this.distanceDurationTemplate = Handlebars.compile(distanceDurationSource);
     }
 
     Itinerary.prototype.getGames = function() {
@@ -26,7 +30,7 @@
     };
 
     Itinerary.prototype.addToMap = function(map) {
-      return map.addItinerary($(this.template())[0]);
+      return map.addItinerary($(this.itineraryTemplate())[0]);
     };
 
     Itinerary.prototype.addGame = function(game, map) {
@@ -73,21 +77,17 @@
     };
 
     Itinerary.prototype.drawItinerary = function(map) {
-      var context, distanceDurationSource, distanceDurationTemplate, game, gameSource, gameTemplate, numDays, numHours, table, _i, _len, _ref;
+      var context, game, numDays, numHours, table, _i, _len, _ref;
       $("#itinerary").empty();
       table = $("<table>");
-      gameSource = $("#itinerary-game").html();
-      gameTemplate = Handlebars.compile(gameSource);
       if (this.itinerary.length > 1) {
         numDays = Math.floor(this.duration / ottb.Itinerary.NUM_SECONDS_IN_DAY);
         numHours = Math.round((this.duration - (numDays * ottb.Itinerary.NUM_SECONDS_IN_DAY)) / ottb.Itinerary.NUM_SECONDS_IN_HOUR);
-        distanceDurationSource = $("#itinerary-distance-duration").html();
-        distanceDurationTemplate = Handlebars.compile(distanceDurationSource);
         context = {
           distance: Math.round(this.distance / 1609.34) + " miles",
           duration: numDays + " days " + numHours + " hours"
         };
-        table.append(distanceDurationTemplate(context));
+        table.append(this.distanceDurationTemplate(context));
       }
       map.drawRoute(this.routes);
       _ref = this.itinerary;
@@ -98,7 +98,7 @@
           away_team: game.away_team_abbr,
           home_team: game.home_team_abbr
         };
-        table.append(gameTemplate(context));
+        table.append(this.gameTemplate(context));
       }
       return $("#itinerary").append(table);
     };
