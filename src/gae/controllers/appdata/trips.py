@@ -6,6 +6,7 @@ Controller to return distance information between each city
 """
 
 import datetime
+import json
 import webapp2
 
 from google.appengine.ext import ndb
@@ -32,13 +33,15 @@ class TripsHandler(webapp2.RequestHandler):
                          ' "distance":"%d",'
                          ' "distance_desc":"%s",'
                          ' "duration":"%d",' 
-                         ' "duration_desc":"%s"}') % (
+                         ' "duration_desc":"%s",'
+                         ' "route":%s}') % (
                 a_trip.orig_team.id(),
                 a_trip.dest_team.id(),
                 a_trip.distance,
                 a_trip.distance_desc,
                 a_trip.duration,
-                a_trip.duration_desc)
+                a_trip.duration_desc,
+                json.dumps(a_trip.route))
         
             trips_data.append(trip_info)
 

@@ -28,7 +28,7 @@ tripsRetrievedCallback = (trips) ->
 # in an info window. Add the game to the itinerary and
 # move to the next day.
 selectLinkCallback = (gameId) ->
-   gItinerary.addGame(gCache.getGame(gameId))
+   gItinerary.addGame(gCache.getGame(gameId), gMap)
    gDatepicker.gotoNextDay()
    
 
@@ -36,7 +36,7 @@ selectLinkCallback = (gameId) ->
 # in an info window. Remove the game from the intinerary and
 # reload the map for the current day
 removeLinkCallback = (gameId) ->
-   gItinerary.removeGame(gCache.getGame(gameId))
+   gItinerary.removeGame(gCache.getGame(gameId), gMap)
    gDatepicker.reloadCurrentDay()
 
 

@@ -31,12 +31,12 @@
   };
 
   selectLinkCallback = function(gameId) {
-    gItinerary.addGame(gCache.getGame(gameId));
+    gItinerary.addGame(gCache.getGame(gameId), gMap);
     return gDatepicker.gotoNextDay();
   };
 
   removeLinkCallback = function(gameId) {
-    gItinerary.removeGame(gCache.getGame(gameId));
+    gItinerary.removeGame(gCache.getGame(gameId), gMap);
     return gDatepicker.reloadCurrentDay();
   };
 

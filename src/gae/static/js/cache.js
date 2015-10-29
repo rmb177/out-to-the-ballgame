@@ -41,6 +41,7 @@
         destTeam["distance_desc"] = trip.distance_desc;
         destTeam["duration"] = parseInt(trip.duration);
         destTeam["duration_desc"] = trip.duration_desc;
+        destTeam["route"] = trip.route;
         origTeam[trip.dest_team_id] = destTeam;
         _results.push(this.tripsCache[trip.orig_team_id] = origTeam);
       }
@@ -53,6 +54,10 @@
 
     Cache.prototype.getTripDuration = function(origTeamId, destTeamId) {
       return this.tripsCache[origTeamId][destTeamId]["duration"];
+    };
+
+    Cache.prototype.getTripRoute = function(origTeamId, destTeamId) {
+      return this.tripsCache[origTeamId][destTeamId]["route"];
     };
 
     return Cache;

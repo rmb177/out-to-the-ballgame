@@ -12,6 +12,7 @@ init = ->
    $('#teamDataIndicator').hide()
    $('#gameDataIndicator').hide()
    $('#tripDataIndicator').hide()
+   $('#routesDataIndicator').hide()
 
    $ ->
       $('#loadTeamData').on('click',
@@ -29,6 +30,12 @@ init = ->
       $('#loadTripData').on('click',
          ->
             generateLoadingFunction($('#tripDataIndicator'), '/admin/trips')
+         )
+         
+   $ ->
+      $('#loadRoutesData').on('click',
+         ->
+            generateLoadingFunction($('#routesDataIndicator'), '/admin/routes')
          )
          
 $(document).ready init

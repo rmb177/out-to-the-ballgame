@@ -12,6 +12,7 @@ class ottb.Map
       @gameMarkers = {}
       @displayedGames = {}
       @lastInfoWindow = null
+      @routes = []
       
       @selectLinkCallback = selectLinkCallback
       @removeLinkCallback = removeLinkCallback
@@ -31,7 +32,23 @@ class ottb.Map
    #
    addItinerary: (itineraryHtml) ->
       @map.controls[google.maps.ControlPosition.TOP_RIGHT].push(itineraryHtml)
-
+      
+   # Draw the given route on the map
+   #
+   drawRoute: (encodedRoutes) ->
+      route.setMap(null) for route in @routes
+      @routes = []
+      
+      for encodedRoute in encodedRoutes
+         polyRoute = new google.maps.Polyline(
+            path: google.maps.geometry.encoding.decodePath(encodedRoute)
+            strokeColor: '#FF0000'
+            strokeOpacity: 1
+            strokeWeight: 2
+         )
+         polyRoute.setMap(@map)
+         @routes.push(polyRoute)
+ 
 
    # Updates the map to show the games for the currently selected date.
    #  newGames - The games for the currently selected date

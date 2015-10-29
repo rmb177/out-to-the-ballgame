@@ -24,6 +24,9 @@
         url: 'appdata/trips',
         success: function(trips) {
           return callback(trips);
+        },
+        error: function(response) {
+          return alert('Error retrieving route data.');
         }
       });
     };

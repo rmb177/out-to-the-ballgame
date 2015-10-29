@@ -15,6 +15,7 @@
       this.gameMarkers = {};
       this.displayedGames = {};
       this.lastInfoWindow = null;
+      this.routes = [];
       this.selectLinkCallback = selectLinkCallback;
       this.removeLinkCallback = removeLinkCallback;
       this.setupSelectLinkListener();
@@ -28,6 +29,29 @@
 
     Map.prototype.addItinerary = function(itineraryHtml) {
       return this.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(itineraryHtml);
+    };
+
+    Map.prototype.drawRoute = function(encodedRoutes) {
+      var encodedRoute, polyRoute, route, _i, _j, _len, _len1, _ref, _results;
+      _ref = this.routes;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        route = _ref[_i];
+        route.setMap(null);
+      }
+      this.routes = [];
+      _results = [];
+      for (_j = 0, _len1 = encodedRoutes.length; _j < _len1; _j++) {
+        encodedRoute = encodedRoutes[_j];
+        polyRoute = new google.maps.Polyline({
+          path: google.maps.geometry.encoding.decodePath(encodedRoute),
+          strokeColor: '#FF0000',
+          strokeOpacity: 1,
+          strokeWeight: 2
+        });
+        polyRoute.setMap(this.map);
+        _results.push(this.routes.push(polyRoute));
+      }
+      return _results;
     };
 
     Map.prototype.displayGames = function(newGames, gamesAttending) {

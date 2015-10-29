@@ -49,6 +49,14 @@ handlers:
   script: controllers.admin.trips.app
   login: admin
   
+- url: /admin/routes
+  script: controllers.admin.routes.app
+  login: admin
+
+- url: /admin/team_routes
+  script: controllers.admin.routes.app
+  login: admin
+  
 ################################
 # Application data
 ################################

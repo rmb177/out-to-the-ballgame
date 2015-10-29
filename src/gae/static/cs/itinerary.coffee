@@ -8,7 +8,9 @@ class ottb.Itinerary
       @itinerary = new Array
       @duration = 0
       @distance = 0
+      @routes = []
       @cache = cache
+      @polygon = undefined
       
       source = $("#itinerary-ui").html()
       @template = Handlebars.compile(source)
@@ -21,26 +23,27 @@ class ottb.Itinerary
       map.addItinerary($(@template())[0])
 
 
-   addGame: (game) ->
+   addGame: (game, map) ->
       @itinerary.push(game)
       @itinerary.sort(@sortGameByDay)
       @calculateTimeAndDistance()
-      @drawItinerary()
+      @drawItinerary(map)
       
       
-   removeGame: (gameToDelete) ->
+   removeGame: (gameToDelete, map) ->
       for game, i in @itinerary
          if game.home_team_abbr == gameToDelete.home_team_abbr
             @itinerary.splice(i, 1);
             break     
       
       @calculateTimeAndDistance()
-      @drawItinerary()
+      @drawItinerary(map)
 
 
    calculateTimeAndDistance: () ->
       @duration = 0
       @distance = 0
+      @routes = []
       prevGame = null
       for game, i in @itinerary         
          # skip first game since that's our origin
@@ -48,12 +51,13 @@ class ottb.Itinerary
             prevGame = game
             continue
          
+         @routes.push(@cache.getTripRoute(prevGame.home_team_id, game.home_team_id))
          @duration += @cache.getTripDuration(prevGame.home_team_id, game.home_team_id)
          @distance += @cache.getTripDistance(prevGame.home_team_id, game.home_team_id)
          prevGame = game
       
       
-   drawItinerary: () ->
+   drawItinerary: (map) ->
       $("#itinerary").empty()
       table = $("<table>")
       
@@ -70,13 +74,16 @@ class ottb.Itinerary
             distance: Math.round(@distance / 1609.34) + " miles"
             duration: numDays + " days " + numHours + " hours"
          table.append(distanceDurationTemplate(context))
-
+         
+      map.drawRoute(@routes)
+      
       for game in @itinerary
          context =
             game_id: game.id,
             away_team: game.away_team_abbr, 
             home_team: game.home_team_abbr, 
          table.append(gameTemplate(context))
+         
       $("#itinerary").append(table)
       
    sortGameByDay: (game1, game2) ->

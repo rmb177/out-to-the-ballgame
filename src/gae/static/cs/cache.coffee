@@ -28,6 +28,7 @@ class ottb.Cache
          destTeam["distance_desc"] = trip.distance_desc
          destTeam["duration"] = parseInt(trip.duration)
          destTeam["duration_desc"] = trip.duration_desc
+         destTeam["route"] = trip.route
          
          origTeam[trip.dest_team_id] = destTeam
          @tripsCache[trip.orig_team_id] = origTeam
@@ -37,3 +38,6 @@ class ottb.Cache
       
    getTripDuration: (origTeamId, destTeamId) ->
       return @tripsCache[origTeamId][destTeamId]["duration"]
+      
+   getTripRoute: (origTeamId, destTeamId) ->
+      return @tripsCache[origTeamId][destTeamId]["route"]

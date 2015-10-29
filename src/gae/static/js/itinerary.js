@@ -14,7 +14,9 @@
       this.itinerary = new Array;
       this.duration = 0;
       this.distance = 0;
+      this.routes = [];
       this.cache = cache;
+      this.polygon = void 0;
       source = $("#itinerary-ui").html();
       this.template = Handlebars.compile(source);
     }
@@ -27,14 +29,14 @@
       return map.addItinerary($(this.template())[0]);
     };
 
-    Itinerary.prototype.addGame = function(game) {
+    Itinerary.prototype.addGame = function(game, map) {
       this.itinerary.push(game);
       this.itinerary.sort(this.sortGameByDay);
       this.calculateTimeAndDistance();
-      return this.drawItinerary();
+      return this.drawItinerary(map);
     };
 
-    Itinerary.prototype.removeGame = function(gameToDelete) {
+    Itinerary.prototype.removeGame = function(gameToDelete, map) {
       var game, i, _i, _len, _ref;
       _ref = this.itinerary;
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
@@ -45,13 +47,14 @@
         }
       }
       this.calculateTimeAndDistance();
-      return this.drawItinerary();
+      return this.drawItinerary(map);
     };
 
     Itinerary.prototype.calculateTimeAndDistance = function() {
       var game, i, prevGame, _i, _len, _ref, _results;
       this.duration = 0;
       this.distance = 0;
+      this.routes = [];
       prevGame = null;
       _ref = this.itinerary;
       _results = [];
@@ -61,6 +64,7 @@
           prevGame = game;
           continue;
         }
+        this.routes.push(this.cache.getTripRoute(prevGame.home_team_id, game.home_team_id));
         this.duration += this.cache.getTripDuration(prevGame.home_team_id, game.home_team_id);
         this.distance += this.cache.getTripDistance(prevGame.home_team_id, game.home_team_id);
         _results.push(prevGame = game);
@@ -68,7 +72,7 @@
       return _results;
     };
 
-    Itinerary.prototype.drawItinerary = function() {
+    Itinerary.prototype.drawItinerary = function(map) {
       var context, distanceDurationSource, distanceDurationTemplate, game, gameSource, gameTemplate, numDays, numHours, table, _i, _len, _ref;
       $("#itinerary").empty();
       table = $("<table>");
@@ -85,6 +89,7 @@
         };
         table.append(distanceDurationTemplate(context));
       }
+      map.drawRoute(this.routes);
       _ref = this.itinerary;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         game = _ref[_i];

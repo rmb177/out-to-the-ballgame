@@ -18,3 +18,4 @@ class Trip(ndb.Model):
     distance_desc = ndb.TextProperty()  # text representation in miles
     duration = ndb.IntegerProperty()    # in seconds
     duration_desc = ndb.TextProperty()  # text representation in hours
+    route = ndb.TextProperty()          # encoded route between cities

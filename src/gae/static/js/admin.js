@@ -16,6 +16,7 @@
     $('#teamDataIndicator').hide();
     $('#gameDataIndicator').hide();
     $('#tripDataIndicator').hide();
+    $('#routesDataIndicator').hide();
     $(function() {
       return $('#loadTeamData').on('click', function() {
         return generateLoadingFunction($('#teamDataIndicator'), '/admin/teams');
@@ -26,9 +27,14 @@
         return generateLoadingFunction($('#gameDataIndicator'), '/admin/games');
       });
     });
-    return $(function() {
+    $(function() {
       return $('#loadTripData').on('click', function() {
         return generateLoadingFunction($('#tripDataIndicator'), '/admin/trips');
+      });
+    });
+    return $(function() {
+      return $('#loadRoutesData').on('click', function() {
+        return generateLoadingFunction($('#routesDataIndicator'), '/admin/routes');
       });
     });
   };

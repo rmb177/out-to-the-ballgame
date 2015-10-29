@@ -17,4 +17,6 @@ class ottb.Communication
       $.ajax(
          url: 'appdata/trips',
          success: (trips) ->
-            callback(trips))
+            callback(trips)
+         error: (response) ->
+            alert('Error retrieving route data.'))
