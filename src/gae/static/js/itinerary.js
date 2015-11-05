@@ -10,7 +10,7 @@
     Itinerary.NUM_SECONDS_IN_HOUR = 60 * 60;
 
     function Itinerary(cache) {
-      var distanceDurationSource, gameSource, itinerarySource;
+      var distanceDurationSource, gameSource, goButtonSource, itinerarySource;
       this.itinerary = new Array;
       this.duration = 0;
       this.distance = 0;
@@ -19,10 +19,12 @@
       this.polygon = void 0;
       itinerarySource = $("#itinerary-ui").html();
       this.itineraryTemplate = Handlebars.compile(itinerarySource);
-      gameSource = $("#itinerary-game").html();
-      this.gameTemplate = Handlebars.compile(gameSource);
       distanceDurationSource = $("#itinerary-distance-duration").html();
       this.distanceDurationTemplate = Handlebars.compile(distanceDurationSource);
+      goButtonSource = $("#itinerary-go-button").html();
+      this.goButtonTemplate = Handlebars.compile(goButtonSource);
+      gameSource = $("#itinerary-game").html();
+      this.gameTemplate = Handlebars.compile(gameSource);
     }
 
     Itinerary.prototype.getGames = function() {
@@ -80,6 +82,9 @@
       var context, game, numDays, numHours, table, _i, _len, _ref;
       $("#itinerary").empty();
       table = $("<table>");
+      if (this.itinerary.length > 0) {
+        table.append(this.goButtonTemplate());
+      }
       if (this.itinerary.length > 1) {
         numDays = Math.floor(this.duration / ottb.Itinerary.NUM_SECONDS_IN_DAY);
         numHours = Math.round((this.duration - (numDays * ottb.Itinerary.NUM_SECONDS_IN_DAY)) / ottb.Itinerary.NUM_SECONDS_IN_HOUR);

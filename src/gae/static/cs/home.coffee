@@ -13,11 +13,15 @@ formatDate = (date) ->
 # Callback method for when the user selects a new date  
 dateChangedCallback = (date) ->
    date.setFullYear(2015)
-   gCommunication.retrieveGamesForDate(formatDate(date), gamesRetrievedCallback)
+   dateStr = formatDate(date)
+   if gCache.getGamesForDate(dateStr)
+      gMap.displayGames(gCache.getGamesForDate(dateStr), gItinerary.getGames())
+   else   
+      gCommunication.retrieveGamesForDate(formatDate(date), gamesRetrievedCallback)
 
 # Callback method for when games have been retrieved from the server
-gamesRetrievedCallback = (games) ->
-   gCache.addGames(games)
+gamesRetrievedCallback = (games, date) ->
+   gCache.addGames(games, date)
    gMap.displayGames(games, gItinerary.getGames())
    
 # Callback method for when trips have been retrieved from the server
@@ -38,7 +42,10 @@ selectLinkCallback = (gameId) ->
 removeLinkCallback = (gameId) ->
    gItinerary.removeGame(gCache.getGame(gameId), gMap)
    gDatepicker.reloadCurrentDay()
-
+   
+   
+$(document).on("click", "#inineraryGoButton", (event) ->
+)
 
 initUI = ->   
    gCache = new ottb.Cache

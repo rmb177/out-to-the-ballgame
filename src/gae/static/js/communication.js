@@ -11,7 +11,7 @@
       return $.ajax({
         url: 'appdata/games?date=' + date,
         success: function(games) {
-          return callback(games);
+          return callback(games, date);
         },
         error: function(response) {
           return alert('Error retrieving games for the selected date.');

@@ -6,22 +6,28 @@
     Cache.name = 'Cache';
 
     function Cache() {
-      this.gameCache = new Object;
+      this.dateGameCache = new Object;
+      this.individualGameCache = new Object;
       this.tripsCache = new Object;
     }
 
-    Cache.prototype.addGames = function(games) {
+    Cache.prototype.addGames = function(games, date) {
       var game, _i, _len, _results;
+      this.dateGameCache[date] = games;
       _results = [];
       for (_i = 0, _len = games.length; _i < _len; _i++) {
         game = games[_i];
-        _results.push(this.gameCache[game.id] = game);
+        _results.push(this.individualGameCache[game.id] = game);
       }
       return _results;
     };
 
+    Cache.prototype.getGamesForDate = function(date) {
+      return this.dateGameCache[date];
+    };
+
     Cache.prototype.getGame = function(gameId) {
-      return this.gameCache[gameId];
+      return this.individualGameCache[gameId];
     };
 
     Cache.prototype.addTrips = function(trips) {

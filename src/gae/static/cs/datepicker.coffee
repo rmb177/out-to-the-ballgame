@@ -3,17 +3,16 @@
 
 class ottb.Datepicker
    
-   @OPENING_DAY = new Date("4/5/2015")
+   @OPENING_DAY = new Date("4/5/2016")
    
    constructor: (dateChangedCallback) ->
       source = $("#datepicker-ui").html()
       @template = Handlebars.compile(source)
       @dateChangedCallback = dateChangedCallback
-      @currentYear = new Date().getFullYear()
       
    reloadCurrentDay: () ->
       currentDate = new Date($("#datepicker").val())
-      currentDate.setFullYear(@currentYear)
+      currentDate.setFullYear(2016)
       newDay = new Date(currentDate)
       @dateChangedCallback(newDay)
 
@@ -25,7 +24,7 @@ class ottb.Datepicker
 
    moveOneDay: (forwardOrBackward) ->
       currentDate = new Date($("#datepicker").val())
-      currentDate.setFullYear(@currentYear)
+      currentDate.setFullYear(2016)
       newDay = new Date(currentDate)
       newDay.setDate(currentDate.getDate() + forwardOrBackward)
       @datepicker.datepicker("setDate", newDay)

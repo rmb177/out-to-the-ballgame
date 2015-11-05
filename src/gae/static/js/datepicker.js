@@ -5,20 +5,19 @@
 
     Datepicker.name = 'Datepicker';
 
-    Datepicker.OPENING_DAY = new Date("4/5/2015");
+    Datepicker.OPENING_DAY = new Date("4/5/2016");
 
     function Datepicker(dateChangedCallback) {
       var source;
       source = $("#datepicker-ui").html();
       this.template = Handlebars.compile(source);
       this.dateChangedCallback = dateChangedCallback;
-      this.currentYear = new Date().getFullYear();
     }
 
     Datepicker.prototype.reloadCurrentDay = function() {
       var currentDate, newDay;
       currentDate = new Date($("#datepicker").val());
-      currentDate.setFullYear(this.currentYear);
+      currentDate.setFullYear(2016);
       newDay = new Date(currentDate);
       return this.dateChangedCallback(newDay);
     };
@@ -34,7 +33,7 @@
     Datepicker.prototype.moveOneDay = function(forwardOrBackward) {
       var currentDate, newDay;
       currentDate = new Date($("#datepicker").val());
-      currentDate.setFullYear(this.currentYear);
+      currentDate.setFullYear(2016);
       newDay = new Date(currentDate);
       newDay.setDate(currentDate.getDate() + forwardOrBackward);
       this.datepicker.datepicker("setDate", newDay);

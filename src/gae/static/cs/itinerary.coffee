@@ -15,12 +15,15 @@ class ottb.Itinerary
       itinerarySource = $("#itinerary-ui").html()
       @itineraryTemplate = Handlebars.compile(itinerarySource)
       
+      distanceDurationSource = $("#itinerary-distance-duration").html()
+      @distanceDurationTemplate = Handlebars.compile(distanceDurationSource)
+      
+      goButtonSource = $("#itinerary-go-button").html()
+      @goButtonTemplate = Handlebars.compile(goButtonSource)
+      
       gameSource = $("#itinerary-game").html()
       @gameTemplate = Handlebars.compile(gameSource)
       
-      distanceDurationSource = $("#itinerary-distance-duration").html()
-      @distanceDurationTemplate = Handlebars.compile(distanceDurationSource)
-
    
    getGames: () ->
       @itinerary.slice()
@@ -68,15 +71,13 @@ class ottb.Itinerary
       $("#itinerary").empty()
       table = $("<table>")
       
-      #gameSource = $("#itinerary-game").html()
-      #gameTemplate = Handlebars.compile(gameSource)
-               
+      if @itinerary.length > 0
+         table.append(@goButtonTemplate())
+      
       if @itinerary.length > 1
          numDays = Math.floor(@duration / ottb.Itinerary.NUM_SECONDS_IN_DAY)
          numHours = Math.round((@duration - (numDays * ottb.Itinerary.NUM_SECONDS_IN_DAY)) / ottb.Itinerary.NUM_SECONDS_IN_HOUR)
 
-         #distanceDurationSource = $("#itinerary-distance-duration").html()
-         #distanceDurationTemplate = Handlebars.compile(distanceDurationSource)
          context = 
             distance: Math.round(@distance / 1609.34) + " miles"
             duration: numDays + " days " + numHours + " hours"

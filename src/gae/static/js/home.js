@@ -17,12 +17,18 @@
   };
 
   dateChangedCallback = function(date) {
+    var dateStr;
     date.setFullYear(2015);
-    return gCommunication.retrieveGamesForDate(formatDate(date), gamesRetrievedCallback);
+    dateStr = formatDate(date);
+    if (gCache.getGamesForDate(dateStr)) {
+      return gMap.displayGames(gCache.getGamesForDate(dateStr), gItinerary.getGames());
+    } else {
+      return gCommunication.retrieveGamesForDate(formatDate(date), gamesRetrievedCallback);
+    }
   };
 
-  gamesRetrievedCallback = function(games) {
-    gCache.addGames(games);
+  gamesRetrievedCallback = function(games, date) {
+    gCache.addGames(games, date);
     return gMap.displayGames(games, gItinerary.getGames());
   };
 
@@ -39,6 +45,8 @@
     gItinerary.removeGame(gCache.getGame(gameId), gMap);
     return gDatepicker.reloadCurrentDay();
   };
+
+  $(document).on("click", "#inineraryGoButton", function(event) {});
 
   initUI = function() {
     gCache = new ottb.Cache;

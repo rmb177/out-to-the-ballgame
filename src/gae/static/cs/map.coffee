@@ -21,7 +21,6 @@ class ottb.Map
       
       @animateMarkers()
    
-   
    # Add the date picker to the map
    #
    addDatePicker: (datePickerHtml) ->

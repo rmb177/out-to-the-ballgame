@@ -4,15 +4,20 @@
 class ottb.Cache
 
    constructor: () ->
-      @gameCache = new Object
+      @dateGameCache = new Object
+      @individualGameCache = new Object
       @tripsCache = new Object
 
-   addGames: (games) ->
+   addGames: (games, date) ->
+      @dateGameCache[date] = games
       for game in games
-         @gameCache[game.id] = game
+         @individualGameCache[game.id] = game
+         
+   getGamesForDate: (date) ->
+      return @dateGameCache[date]
 
    getGame: (gameId) ->
-      @gameCache[gameId]
+      @individualGameCache[gameId]
       
    addTrips: (trips) ->
       for trip in trips

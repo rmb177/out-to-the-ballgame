@@ -9,7 +9,7 @@ class ottb.Communication
       $.ajax(
          url: 'appdata/games?date=' + date,
          success: (games) ->
-            callback(games)
+            callback(games, date)
          error: (response) ->
             alert('Error retrieving games for the selected date.'))
 
