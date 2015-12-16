@@ -3,6 +3,7 @@ gDatepicker = null
 gCommunication = null
 gCache = null
 gItinerary = null
+gTripPlanner = null
 
 
 # formats date as mm/dd/yyyy
@@ -45,6 +46,7 @@ removeLinkCallback = (gameId) ->
    
    
 $(document).on("click", "#inineraryGoButton", (event) ->
+   gTripPlanner.planTrip()
 )
 
 initUI = ->   
@@ -58,5 +60,7 @@ initUI = ->
    gMap = new ottb.Map(selectLinkCallback, removeLinkCallback)
    gDatepicker.addToMap(gMap)
    gItinerary.addToMap(gMap)
+   
+   gTripPlanner = new ottb.TripPlanner(gItinerary, gMap, gCache, gCommunication, gDatepicker)
 
 $(document).ready initUI

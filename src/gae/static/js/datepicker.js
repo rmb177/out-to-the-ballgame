@@ -22,6 +22,11 @@
       return this.dateChangedCallback(newDay);
     };
 
+    Datepicker.prototype.gotoDate = function(date) {
+      this.datepicker.datepicker("setDate", date);
+      return this.dateChangedCallback(date);
+    };
+
     Datepicker.prototype.gotoNextDay = function() {
       return this.moveOneDay(1);
     };

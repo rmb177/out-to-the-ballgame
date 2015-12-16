@@ -16,6 +16,10 @@ class ottb.Datepicker
       newDay = new Date(currentDate)
       @dateChangedCallback(newDay)
 
+   gotoDate: (date) ->
+      @datepicker.datepicker("setDate", date)
+      @dateChangedCallback(date)
+
    gotoNextDay: () ->
       @moveOneDay(1)
       
