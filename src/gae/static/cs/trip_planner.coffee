@@ -11,14 +11,29 @@ class ottb.TripPlanner
 
 
    planTrip: () ->
-      games = @itinerary.getGames()
-      lastGame = games[games.length - 1]
+      gamesInTrip = @itinerary.getGames()
+      teamsVisited = (game.home_team_abbr for game in gamesInTrip)
+      lastGame = gamesInTrip[gamesInTrip.length - 1]
       
       # Date is yyyy-mm-dd string
       tokens = lastGame.game_day.split("-")
-      @datePicker.gotoDate(new Date(parseInt(tokens[0]), parseInt(tokens[1]) - 1, 1 + parseInt(tokens[2])))
+      nextDay = new Date(parseInt(tokens[0]), parseInt(tokens[1]) - 1, 1 + parseInt(tokens[2]))
+      @datePicker.gotoDate(nextDay)
       
+      nextDayKey = nextDay.getFullYear() + "-" + 
+         @ensureTwoDigitNumber(nextDay.getMonth() + 1) + "-" + 
+         @ensureTwoDigitNumber(nextDay.getDate())
+         
+      todaysGames = @cache.getGamesForDate(nextDayKey)
       
+      for game in todaysGames
+         alreadyVisited = (team for team in teamsVisited when team is game.home_team_abbr)[0]
+         if not alreadyVisited?
+            @itinerary.addGame(game, @map)
+            break
+            
+            
+            
       #  get date of last game in itinerary
       #  goto that date
       
@@ -29,3 +44,10 @@ class ottb.TripPlanner
       
       #for num in [1..30]
       #   @datePicker.gotoNextDay()
+   
+   
+   ensureTwoDigitNumber: (number) ->
+      str = '' + number;
+      if str.length < 2
+         str = '0' + str;
+      return str

@@ -14,11 +14,54 @@
     }
 
     TripPlanner.prototype.planTrip = function() {
-      var games, lastGame, tokens;
-      games = this.itinerary.getGames();
-      lastGame = games[games.length - 1];
+      var alreadyVisited, game, gamesInTrip, lastGame, nextDay, nextDayKey, team, teamsVisited, todaysGames, tokens, _i, _len, _results;
+      gamesInTrip = this.itinerary.getGames();
+      teamsVisited = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = gamesInTrip.length; _i < _len; _i++) {
+          game = gamesInTrip[_i];
+          _results.push(game.home_team_abbr);
+        }
+        return _results;
+      })();
+      lastGame = gamesInTrip[gamesInTrip.length - 1];
       tokens = lastGame.game_day.split("-");
-      return this.datePicker.gotoDate(new Date(parseInt(tokens[0]), parseInt(tokens[1]) - 1, 1 + parseInt(tokens[2])));
+      nextDay = new Date(parseInt(tokens[0]), parseInt(tokens[1]) - 1, 1 + parseInt(tokens[2]));
+      this.datePicker.gotoDate(nextDay);
+      nextDayKey = nextDay.getFullYear() + "-" + this.ensureTwoDigitNumber(nextDay.getMonth() + 1) + "-" + this.ensureTwoDigitNumber(nextDay.getDate());
+      todaysGames = this.cache.getGamesForDate(nextDayKey);
+      _results = [];
+      for (_i = 0, _len = todaysGames.length; _i < _len; _i++) {
+        game = todaysGames[_i];
+        alreadyVisited = ((function() {
+          var _j, _len1, _results1;
+          _results1 = [];
+          for (_j = 0, _len1 = teamsVisited.length; _j < _len1; _j++) {
+            team = teamsVisited[_j];
+            if (team === game.home_team_abbr) {
+              _results1.push(team);
+            }
+          }
+          return _results1;
+        })())[0];
+        if (!(alreadyVisited != null)) {
+          this.itinerary.addGame(game, this.map);
+          break;
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    TripPlanner.prototype.ensureTwoDigitNumber = function(number) {
+      var str;
+      str = '' + number;
+      if (str.length < 2) {
+        str = '0' + str;
+      }
+      return str;
     };
 
     return TripPlanner;
