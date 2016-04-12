@@ -20,7 +20,7 @@
 
   dateChangedCallback = function(date) {
     var dateStr;
-    date.setFullYear(2015);
+    date.setFullYear(2016);
     dateStr = formatDate(date);
     if (gCache.getGamesForDate(dateStr)) {
       return gMap.displayGames(gCache.getGamesForDate(dateStr), gItinerary.getGames());

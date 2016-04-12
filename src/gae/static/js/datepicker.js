@@ -5,7 +5,7 @@
 
     Datepicker.name = 'Datepicker';
 
-    Datepicker.OPENING_DAY = new Date("4/5/2016");
+    Datepicker.OPENING_DAY = new Date("4/3/2016");
 
     function Datepicker(dateChangedCallback) {
       var source;

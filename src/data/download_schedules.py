@@ -13,7 +13,7 @@ sys.path.append(r'..')
 import util.util as util
 
 # Website ids for all of the MLB teams to download their schedule
-BASE_URL = "http://mlb.mlb.com/soa/ical/schedule.csv?"
+BASE_URL = "http://mlb.mlb.com/ticketing-client/csv/EventTicketPromotionPrice.tiksrv?"
 SEASON = 2016
 TEAM_IDS = {
     'bal': 110,
@@ -54,7 +54,7 @@ def main():
     """
     for key, value in TEAM_IDS.iteritems():
         util.print_progress_dot()
-        url = "%steam_id=%d&season=%d&game_type='R'" % (BASE_URL, value, SEASON)
+        url = "%steam_id=%d&display_in=singlegame" % (BASE_URL, value)
         page = urllib2.urlopen(url)
 
         if not os.path.isdir('schedules/%s/' % (SEASON)):

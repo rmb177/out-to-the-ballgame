@@ -62,19 +62,22 @@ class AdminTeamGamesHandler(webapp2.RequestHandler):
         all of the home games for the team to the datastore.
         """
         file_name = self.request.get('file_name')
-
         with open(file_name, 'rb') as schedule:
             next(schedule) # skip header line
             reader = csv.reader(schedule)
-
             home_team = self.__get_home_team(file_name)
-            logging.debug(home_team.name)
             for row in reader:
-                if home_team.stadium_name == row[LOCATION_INDEX]:
+                if row[LOCATION_INDEX].startswith(home_team.stadium_name):
+                    
+                    # In 2016 some non-game events (stadium tours) have been added
+                    # Skip them
                     away_team = self.__get_away_team(row[TEAMS_INDEX])
+                    if None == away_team:
+                        continue
+                        
                     game_time = self.__get_game_time(
                      row[GAME_DATE_INDEX], row[GAME_TIME_INDEX])
-
+                     
                     query = game.Game.gql(
                      'WHERE home_team = :1 AND '
                      'away_team = :2 AND '
@@ -104,7 +107,12 @@ class AdminTeamGamesHandler(webapp2.RequestHandler):
 
         Schedule file abbreivates 'Diamondbacks' as 'D-backs'
         """
-        away_team_name = re.search('^.* at', game_info_str).group(0)[:-3]
+        #away_team_name = re.search('^.* at', game_info_str).group(0)[:-3]
+        match = re.search('^.* at', game_info_str)
+        if None == match:
+            return None
+        
+        away_team_name = match.group(0)[:-3]
         if away_team_name == 'D-backs':
             away_team_name = 'Diamondbacks'
 
@@ -119,8 +127,10 @@ class AdminTeamGamesHandler(webapp2.RequestHandler):
 
         All times are read in as Eastern and converted to UTC
         """
+        if "" == time_str:
+            time_str = "12:00 PM"
+        
         datetime_str = '%s %s' %(date_str, time_str)
-        logging.debug(datetime_str)
         game_time = time.strptime(datetime_str, '%m/%d/%y %I:%M %p')
         logging.debug(game_time)
         return datetime.datetime.fromtimestamp(time.mktime(game_time))

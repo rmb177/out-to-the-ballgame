@@ -13,7 +13,7 @@ formatDate = (date) ->
 
 # Callback method for when the user selects a new date  
 dateChangedCallback = (date) ->
-   date.setFullYear(2015)
+   date.setFullYear(2016)
    dateStr = formatDate(date)
    if gCache.getGamesForDate(dateStr)
       gMap.displayGames(gCache.getGamesForDate(dateStr), gItinerary.getGames())

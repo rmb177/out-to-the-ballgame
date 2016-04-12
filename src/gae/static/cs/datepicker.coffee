@@ -3,7 +3,7 @@
 
 class ottb.Datepicker
    
-   @OPENING_DAY = new Date("4/5/2016")
+   @OPENING_DAY = new Date("4/3/2016")
    
    constructor: (dateChangedCallback) ->
       source = $("#datepicker-ui").html()
