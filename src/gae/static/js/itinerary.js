@@ -79,23 +79,10 @@
     };
 
     Itinerary.prototype.drawItinerary = function(map) {
-      var context, game, numDays, numHours, table, _i, _len, _ref;
+      var context, game, _i, _len, _ref, _results;
       $("#itinerary").empty();
-      table = $("<table>");
-      if (this.itinerary.length > 0) {
-        table.append(this.goButtonTemplate());
-      }
-      if (this.itinerary.length > 1) {
-        numDays = Math.floor(this.duration / ottb.Itinerary.NUM_SECONDS_IN_DAY);
-        numHours = Math.round((this.duration - (numDays * ottb.Itinerary.NUM_SECONDS_IN_DAY)) / ottb.Itinerary.NUM_SECONDS_IN_HOUR);
-        context = {
-          distance: Math.round(this.distance / 1609.34) + " miles",
-          duration: numDays + " days " + numHours + " hours"
-        };
-        table.append(this.distanceDurationTemplate(context));
-      }
-      map.drawRoute(this.routes);
       _ref = this.itinerary;
+      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         game = _ref[_i];
         context = {
@@ -103,9 +90,9 @@
           away_team: game.away_team_abbr,
           home_team: game.home_team_abbr
         };
-        table.append(this.gameTemplate(context));
+        _results.push($("#itinerary").append(this.gameTemplate(context)));
       }
-      return $("#itinerary").append(table);
+      return _results;
     };
 
     Itinerary.prototype.sortGameByDay = function(game1, game2) {

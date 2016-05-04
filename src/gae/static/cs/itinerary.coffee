@@ -69,30 +69,30 @@ class ottb.Itinerary
       
    drawItinerary: (map) ->
       $("#itinerary").empty()
-      table = $("<table>")
+      #table = $("<table>")
       
-      if @itinerary.length > 0
-         table.append(@goButtonTemplate())
+      #if @itinerary.length > 0
+      #   table.append(@goButtonTemplate())
       
-      if @itinerary.length > 1
-         numDays = Math.floor(@duration / ottb.Itinerary.NUM_SECONDS_IN_DAY)
-         numHours = Math.round((@duration - (numDays * ottb.Itinerary.NUM_SECONDS_IN_DAY)) / ottb.Itinerary.NUM_SECONDS_IN_HOUR)
+      #if @itinerary.length > 1
+      #   numDays = Math.floor(@duration / ottb.Itinerary.NUM_SECONDS_IN_DAY)
+      #   numHours = Math.round((@duration - (numDays * ottb.Itinerary.NUM_SECONDS_IN_DAY)) / ottb.Itinerary.NUM_SECONDS_IN_HOUR)
 
-         context = 
-            distance: Math.round(@distance / 1609.34) + " miles"
-            duration: numDays + " days " + numHours + " hours"
-         table.append(@distanceDurationTemplate(context))
+      #   context = 
+      #      distance: Math.round(@distance / 1609.34) + " miles"
+      #      duration: numDays + " days " + numHours + " hours"
+      #   table.append(@distanceDurationTemplate(context))
          
-      map.drawRoute(@routes)
+      #map.drawRoute(@routes)
       
       for game in @itinerary
          context =
             game_id: game.id,
             away_team: game.away_team_abbr, 
             home_team: game.home_team_abbr, 
-         table.append(@gameTemplate(context))
+         $("#itinerary").append(@gameTemplate(context))
          
-      $("#itinerary").append(table)
+      #$("#itinerary").append(table)
       
    sortGameByDay: (game1, game2) ->
       return (game1.game_day > game2.game_day) - (game2.game_day > game1.game_day)

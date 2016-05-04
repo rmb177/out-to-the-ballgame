@@ -39,7 +39,6 @@
       <!-- template for itinerary ui component -->
       <script id="itinerary-ui" type="text/x-handlebars-template">
          <div id="itinerary">
-            <p>Itinerary</p>
          </div>
       </script>
       
@@ -66,29 +65,27 @@
             <td>{{duration}}</td>
          </tr>
       </script>
-      
+   
+         
       <!-- template for game display in itinerary -->
       <script id="itinerary-game" type="text/x-handlebars-template">
-         <tr>
-            <td align="center"><div class="{{away_team}}"></div></td>
-            <td align="center">@</td>
-            <td align="center"><div class="{{home_team}}"></div></td>
-         </tr>
+         <div class="itinerary-game">
+            <img class="itinerary-game-team-cell" src="/static/images/{{away_team}}.png" />
+            
+            <span class="itinerary-game-at-cell">@</span>
+            <img class="itinerary-game-team-cell" src="/static/images/{{home_team}}.png" />
+         </div>
       </script>
       
-      
+     
       <!-- template for game info window -->
       <script id="info-window" type="text/x-handlebars-template">
-         <table valign="middle">
-            <tr>
-               <td><div class="{{away_team}}"></div></td>
-               <td>@</td>
-               <td><div class="{{home_team}}"></div></td>
-            </tr>
-            <tr>
-               <td colspan="3" align="center"><div>{{game_time}}</div></td>
-            </tr>
-         </table>
+         <div class="info-window-game">
+            <img class="itinerary-game-team-cell" src="/static/images/{{away_team}}.png" />
+            
+            <span class="itinerary-game-at-cell">@</span>
+            <img class="itinerary-game-team-cell" src="/static/images/{{home_team}}.png" />
+         </div>
          {{#if is_attending}}
             <div class="remove-game-link">
                <a href="" id="{{game_id}}">Remove</a>
@@ -97,7 +94,7 @@
             <div class="select-game-link">
                <a href="" id="{{game_id}}">Select</a>
             </div>
-         {{/if}}
+         {{/if}} 
       </script>
       {% endraw %}
       

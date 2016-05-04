@@ -55,12 +55,12 @@
   initUI = function() {
     gCache = new ottb.Cache;
     gItinerary = new ottb.Itinerary(gCache);
-    gCommunication = new ottb.Communication();
-    gCommunication.retrieveTrips(tripsRetrievedCallback);
     gDatepicker = new ottb.Datepicker(dateChangedCallback);
     gMap = new ottb.Map(selectLinkCallback, removeLinkCallback);
     gDatepicker.addToMap(gMap);
     gItinerary.addToMap(gMap);
+    gCommunication = new ottb.Communication();
+    gCommunication.retrieveTrips(tripsRetrievedCallback);
     return gTripPlanner = new ottb.TripPlanner(gItinerary, gMap, gCache, gCommunication, gDatepicker);
   };
 
