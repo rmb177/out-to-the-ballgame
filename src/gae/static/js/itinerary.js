@@ -81,6 +81,7 @@
     Itinerary.prototype.drawItinerary = function(map) {
       var context, game, _i, _len, _ref, _results;
       $("#itinerary").empty();
+      map.drawRoute(this.routes);
       _ref = this.itinerary;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {

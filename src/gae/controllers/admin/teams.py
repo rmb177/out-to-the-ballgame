@@ -24,6 +24,7 @@ DIVISION_KEY = 'division'
 STADIUM_KEY = 'stadiumName'
 LAT_KEY = 'lat'
 LON_KEY = 'lon'
+ET_TIME_OFFSET = "etTimeOffset"
 
 import models.team as team
 
@@ -49,6 +50,7 @@ class AdminTeamHandler(webapp2.RequestHandler):
             t.division = team_data[DIVISION_KEY]
             t.stadium_name = team_data[STADIUM_KEY]
             t.location = ndb.GeoPt(team_data[LAT_KEY], team_data[LON_KEY])
+            t.etTimeOffset = team_data[ET_TIME_OFFSET]
             t.put()
 
 

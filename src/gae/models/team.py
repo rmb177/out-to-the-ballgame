@@ -18,3 +18,4 @@ class Team(ndb.Model):
     division = ndb.StringProperty()
     stadium_name = ndb.StringProperty()
     location = ndb.GeoPtProperty()
+    etTimeOffset = ndb.IntegerProperty()

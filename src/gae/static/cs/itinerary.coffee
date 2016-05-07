@@ -83,7 +83,7 @@ class ottb.Itinerary
       #      duration: numDays + " days " + numHours + " hours"
       #   table.append(@distanceDurationTemplate(context))
          
-      #map.drawRoute(@routes)
+      map.drawRoute(@routes)
       
       for game in @itinerary
          context =
