@@ -9,6 +9,10 @@
 
     Itinerary.NUM_SECONDS_IN_HOUR = 60 * 60;
 
+    Itinerary.NUM_SECONDS_IN_MINUTE = 60;
+
+    Itinerary.METERS_IN_MILE = 1609.34;
+
     function Itinerary(cache) {
       var distanceDurationSource, gameSource, goButtonSource, itinerarySource;
       this.itinerary = new Array;
@@ -79,25 +83,58 @@
     };
 
     Itinerary.prototype.drawItinerary = function(map) {
-      var context, game, _i, _len, _ref, _results;
+      var context, distance, duration, game, prevTeam, _i, _len, _ref, _results;
       $("#itinerary").empty();
       map.drawRoute(this.routes);
+      prevTeam = null;
       _ref = this.itinerary;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         game = _ref[_i];
+        distance = null;
+        if (prevTeam) {
+          distance = this.getNumMiles(this.cache.getTripDistance(prevTeam, game.home_team_id));
+          duration = this.getTimeString(this.cache.getTripDuration(prevTeam, game.home_team_id));
+        }
         context = {
           game_id: game.id,
           away_team: game.away_team_abbr,
-          home_team: game.home_team_abbr
+          home_team: game.home_team_abbr,
+          prev_team: prevTeam,
+          distance: distance,
+          duration: duration
         };
-        _results.push($("#itinerary").append(this.gameTemplate(context)));
+        $("#itinerary").append(this.gameTemplate(context));
+        _results.push(prevTeam = game.home_team_id);
       }
       return _results;
     };
 
     Itinerary.prototype.sortGameByDay = function(game1, game2) {
       return (game1.game_day > game2.game_day) - (game2.game_day > game1.game_day);
+    };
+
+    Itinerary.prototype.getNumMiles = function(numMeters) {
+      return Math.round(numMeters / ottb.Itinerary.METERS_IN_MILE).toLocaleString();
+    };
+
+    Itinerary.prototype.getTimeString = function(numSeconds) {
+      var numDays, numHours, numMinutes, timeString;
+      numDays = Math.floor(numSeconds / ottb.Itinerary.NUM_SECONDS_IN_DAY);
+      numHours = Math.floor((numSeconds - (numDays * ottb.Itinerary.NUM_SECONDS_IN_DAY)) / ottb.Itinerary.NUM_SECONDS_IN_HOUR);
+      numMinutes = Math.round((numSeconds - (numDays * ottb.Itinerary.NUM_SECONDS_IN_DAY) - (numHours * ottb.Itinerary.NUM_SECONDS_IN_HOUR)) / ottb.Itinerary.NUM_SECONDS_IN_MINUTE);
+      timeString = "";
+      if (numDays > 0) {
+        timeString += numDays + (numDays === 1 ? " day, " : " days, ");
+      }
+      if (numHours > 0) {
+        timeString += numHours + (numHours === 1 ? " hour, " : " hours, ");
+      }
+      if (numMinutes > 0) {
+        timeString += numMinutes + (numMinutes === 1 ? " minute, " : " minutes, ");
+      }
+      timeString = timeString.slice(0, -2);
+      return timeString;
     };
 
     return Itinerary;

@@ -69,11 +69,21 @@
          
       <!-- template for game display in itinerary -->
       <script id="itinerary-game" type="text/x-handlebars-template">
-         <div class="itinerary-game">
-            <img class="itinerary-game-team-cell" src="/static/images/{{away_team}}.png" />
+         <div class="itinerary-cell">
+            <div class="itinerary-game">
+               <img class="itinerary-game-team-cell" src="/static/images/{{away_team}}.png" />
+               <span class="itinerary-game-at-cell">@</span>
+               <img class="itinerary-game-team-cell" src="/static/images/{{home_team}}.png" />
+            </div>
             
-            <span class="itinerary-game-at-cell">@</span>
-            <img class="itinerary-game-team-cell" src="/static/images/{{home_team}}.png" />
+            {{#if prev_team}}
+               <div>
+                  {{distance}} miles
+               </div>
+               <div>
+                  {{duration}}
+               </div>
+            {{/if}}
          </div>
       </script>
       
@@ -82,7 +92,6 @@
       <script id="info-window" type="text/x-handlebars-template">
          <div class="info-window-game">
             <img class="itinerary-game-team-cell" src="/static/images/{{away_team}}.png" />
-            
             <span class="itinerary-game-at-cell">@</span>
             <img class="itinerary-game-team-cell" src="/static/images/{{home_team}}.png" />
          </div>

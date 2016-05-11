@@ -3,6 +3,8 @@
 class ottb.Itinerary
    @NUM_SECONDS_IN_DAY = 24 * 60 * 60
    @NUM_SECONDS_IN_HOUR = 60 * 60
+   @NUM_SECONDS_IN_MINUTE = 60
+   @METERS_IN_MILE = 1609.34
    
    constructor: (cache) ->
       @itinerary = new Array
@@ -85,15 +87,52 @@ class ottb.Itinerary
          
       map.drawRoute(@routes)
       
+      prevTeam = null
       for game in @itinerary
+         distance = null
+         if prevTeam
+            distance = @getNumMiles(@cache.getTripDistance(prevTeam, game.home_team_id))
+            duration = @getTimeString(@cache.getTripDuration(prevTeam, game.home_team_id))
+            
          context =
-            game_id: game.id,
+            game_id:   game.id,
             away_team: game.away_team_abbr, 
-            home_team: game.home_team_abbr, 
+            home_team: game.home_team_abbr,
+            prev_team: prevTeam,
+            distance:  distance,
+            duration:  duration
          $("#itinerary").append(@gameTemplate(context))
+         prevTeam = game.home_team_id
          
       #$("#itinerary").append(table)
       
    sortGameByDay: (game1, game2) ->
       return (game1.game_day > game2.game_day) - (game2.game_day > game1.game_day)
+      
+   
+   # return the number of miles for the given amount of meters
+   getNumMiles: (numMeters) ->
+      Math.round(numMeters / ottb.Itinerary.METERS_IN_MILE).toLocaleString()
+   
+   # returns given seconds as a readable string
+   getTimeString: (numSeconds) ->
+      numDays = Math.floor(numSeconds / ottb.Itinerary.NUM_SECONDS_IN_DAY)
+      numHours = Math.floor((numSeconds - (numDays * ottb.Itinerary.NUM_SECONDS_IN_DAY)) / ottb.Itinerary.NUM_SECONDS_IN_HOUR)
+      numMinutes = Math.round((numSeconds - (numDays * ottb.Itinerary.NUM_SECONDS_IN_DAY) - (numHours * ottb.Itinerary.NUM_SECONDS_IN_HOUR)) / ottb.Itinerary.NUM_SECONDS_IN_MINUTE)
+      
+      timeString = ""
+      if numDays > 0
+         timeString += numDays + (if numDays == 1 then " day, " else " days, ")
+      
+      if numHours > 0
+         timeString += numHours + (if numHours == 1 then " hour, " else " hours, ")
+      
+      if numMinutes > 0
+         timeString += numMinutes + (if numMinutes == 1 then " minute, " else " minutes, ")
+      
+      # Remove trailing space and comma
+      timeString = timeString.slice(0, -2)
+
+      return timeString
+   
    

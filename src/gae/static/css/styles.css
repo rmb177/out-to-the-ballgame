@@ -46,10 +46,14 @@
     width: 220px;
 }
 
-.itinerary-game
+.itinerary-cell
 {
     border-bottom-style: solid;
     border-bottom-width: 1px;
+}
+
+.itinerary-game
+{
     height: 80px;
     text-align: center;
     width: 220px;
